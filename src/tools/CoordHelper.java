@@ -34,7 +34,7 @@ public class CoordHelper {
         return polToCart(orig, polCo.getAngle(), polCo.getDist());
     }
 
-    public static Point polToCart(int origX, int origY, double angle, double dist) {
+    public static Point polToCart(double origX, double origY, double angle, double dist) {
         return new Point((int) round(origX + (dist * cos(angle))), (int) round(origY + (dist * sin(angle))));
     }
 
