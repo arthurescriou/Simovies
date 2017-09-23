@@ -15,18 +15,22 @@ import static java.lang.Math.abs;
 import static java.lang.Math.sin;
 import static java.text.MessageFormat.format;
 
+import java.awt.*;
 import java.text.MessageFormat;
 import java.util.*;
 
 import characteristics.IRadarResult;
 import characteristics.Parameters;
 import robotsimulator.Brain;
+import tools.CoordHelper;
 
 public class BrainDetectScout extends Brain {
 
+    private double cpt=0;
     private String name ;
     private double posX;
     private double posY;
+    private double moveSpeed = Parameters.teamASecondaryBotSpeed;
 
     public void activate() {
         boolean haut = false;
@@ -54,14 +58,14 @@ public class BrainDetectScout extends Brain {
                 name = "schg";
                 posX = Parameters.teamASecondaryBot1InitX;
                 posY = Parameters.teamASecondaryBot1InitY;
-                sendLogMessage("schg " +posX+" "+posY);
+                logPosition();
             }
 
             if (droite) {
                 name = "schd";
                 posX = Parameters.teamBSecondaryBot1InitX;
                 posY = Parameters.teamBSecondaryBot1InitY;
-                sendLogMessage("schd " +posX+" "+posY);
+                logPosition();
             }
         }
         if(bas){
@@ -69,13 +73,13 @@ public class BrainDetectScout extends Brain {
                 name = "scbg";
                 posX = Parameters.teamASecondaryBot2InitX;
                 posY = Parameters.teamASecondaryBot2InitY;
-                sendLogMessage("scbg " +posX+" "+posY);
+                logPosition();
             }
             if (droite) {
                 name = "scbd";
                 posX = Parameters.teamBSecondaryBot2InitX;
                 posY = Parameters.teamBSecondaryBot2InitY;
-                sendLogMessage("scbd " +posX+" "+posY);
+                logPosition();
             }
         }
 
@@ -83,13 +87,29 @@ public class BrainDetectScout extends Brain {
     }
 
     public void step() {
-//        if(name.equals("sc2g")){
-//            sendLogMessage("Je suis le sc2g");
-//            move();
-//        }
-//        if(name.equals("sc2d")){
-//            sendLogMessage("Je suis le sc2d");
+//        if (cpt <10){
+//            cpt++;
 //            stepTurn(Parameters.Direction.RIGHT);
+//            return;
 //        }
+        boolean collision =false;
+        int i= 0;
+        for (IRadarResult r : detectRadar()) {
+            if (r.getObjectDistance() < Parameters.teamASecondaryBotRadius*3) {
+                collision = true;
+            }
+        }
+        if(!collision) {
+            Point newPos = CoordHelper.polToCart(posX, posY, getHeading(), moveSpeed);
+            posX = newPos.x;
+            posY = newPos.y;
+        }
+        logPosition();
+        move();
+
+    }
+
+    private void logPosition(){
+        sendLogMessage(name +" x:"+posX +" y:"+posY);
     }
 }

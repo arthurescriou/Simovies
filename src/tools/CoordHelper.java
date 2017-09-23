@@ -27,7 +27,7 @@ public class CoordHelper {
     }
 
     public static Pair<Double, Double> cartToPol(Point orig, Point to) {
-        return new Pair<>(Math.atan2(to.getY() - orig.getY(), to.getX() - orig.getX()), orig.distance(to));
+        return new Pair<>(atan2(to.getY() - orig.getY(), to.getX() - orig.getX()), orig.distance(to));
     }
 
     public static Point polToCart(Point orig, PolarCoordinate polCo) {
@@ -35,7 +35,9 @@ public class CoordHelper {
     }
 
     public static Point polToCart(double origX, double origY, double angle, double dist) {
-        return new Point((int) round(origX + (dist * cos(angle))), (int) round(origY + (dist * sin(angle))));
+        long x = max(round(origX + (dist * cos(angle))),3000);
+        long y = max(round(origY + (dist * sin(angle))),2000);
+        return new Point((int) x, (int) y);
     }
 
     public static Point polToCart(Point orig, double angle, double dist) {
