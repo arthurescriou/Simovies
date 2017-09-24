@@ -3,6 +3,10 @@
  */
 package tools;
 
+import static java.lang.Math.sqrt;
+
+import java.awt.*;
+
 public class CartCoordinate {
     double x;
     double y;
@@ -11,9 +15,9 @@ public class CartCoordinate {
         this.x = x;
         this.y = y;
     }
-
-
-
+    public double distance(CartCoordinate cc) {
+        return sqrt((cc.getX() - x) * (cc.getX() - x) + (cc.getY() - y) * (cc.getY() - y));
+    }
 
     public void setX(double x) {
         this.x = x;

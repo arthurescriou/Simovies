@@ -16,18 +16,18 @@ import javafx.util.Pair;
 public class CoordHelper {
 
     public static PolarCoordinate cartToPol(int origX, int origY, int toX, int toY) {
-        return cartToPol(new Point(round(origX), round(origY)), new Point(round(toX), round(toY)));
+        return cartToPol(new CartCoordinate(round(origX), round(origY)), new CartCoordinate(round(toX), round(toY)));
     }
 
-    public static PolarCoordinate cartToPol(int origX, int origY, Point dest) {
-        return cartToPol(new Point(round(origX), round(origY)), dest);
+    public static PolarCoordinate cartToPol(int origX, int origY, CartCoordinate dest) {
+        return cartToPol(new CartCoordinate(round(origX), round(origY)), dest);
     }
 
-    public static PolarCoordinate cartToPol(Point orig, int toX, int toY) {
-        return cartToPol(orig, new Point(round(toX), round(toY)));
+    public static PolarCoordinate cartToPol(CartCoordinate orig, int toX, int toY) {
+        return cartToPol(orig, new CartCoordinate(round(toX), round(toY)));
     }
 
-    public static PolarCoordinate cartToPol(Point orig, Point to) {
+    public static PolarCoordinate cartToPol(CartCoordinate orig, CartCoordinate to) {
         return new PolarCoordinate(atan2(to.getY() - orig.getY(), to.getX() - orig.getX()), orig.distance(to));
     }
 

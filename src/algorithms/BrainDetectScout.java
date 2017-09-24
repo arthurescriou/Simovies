@@ -93,13 +93,12 @@ public class BrainDetectScout extends Brain {
     }
 
     public void step() {
-                if (cpt <20){
+                if (cpt <0){
                     cpt++;
                     stepTurn(Parameters.Direction.RIGHT);
                     return;
                 }
         boolean collision = false;
-        int i = 0;
 
         for (IRadarResult r : detectRadar()) {
             Double radius = 0.0;
@@ -125,7 +124,7 @@ public class BrainDetectScout extends Brain {
             if (detectFront().getObjectType() == IFrontSensorResult.Types.WALL) {
                 return;
             }
-            if (r.getObjectDistance() < radius * 3)
+            if (r.getObjectDistance() < radius * 2.5)
                 collision = true;
         }
 
