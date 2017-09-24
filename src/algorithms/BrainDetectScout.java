@@ -33,6 +33,7 @@ public class BrainDetectScout extends Brain {
     private double moveSpeed = Parameters.teamASecondaryBotSpeed;
 
     public void activate() {
+        BrainDetectScoutMaster.getInstance().add(this);
         boolean haut = false;
         boolean bas = false;
         boolean gauche = false;
@@ -137,6 +138,17 @@ public class BrainDetectScout extends Brain {
 
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public double getPosX() {
+        return posX;
+    }
+
+    public double getPosY() {
+        return posY;
+    }
 
     private void logPosition() {
         sendLogMessage(name + " x:" + posX + " y:" + posY);
