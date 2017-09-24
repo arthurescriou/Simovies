@@ -21,6 +21,7 @@ import java.util.*;
 
 import characteristics.*;
 import robotsimulator.Brain;
+import tools.CartCoordinate;
 import tools.CoordHelper;
 
 public class BrainDetectScout extends Brain {
@@ -92,7 +93,7 @@ public class BrainDetectScout extends Brain {
     }
 
     public void step() {
-                if (cpt <10){
+                if (cpt <20){
                     cpt++;
                     stepTurn(Parameters.Direction.RIGHT);
                     return;
@@ -129,9 +130,9 @@ public class BrainDetectScout extends Brain {
         }
 
         if (!collision) {
-            Point newPos = CoordHelper.polToCart(posX, posY, getHeading(), moveSpeed);
-            posX = newPos.x;
-            posY = newPos.y;
+            CartCoordinate newPos = CoordHelper.polToCart(posX, posY, getHeading(), moveSpeed);
+            posX = newPos.getX();
+            posY = newPos.getY();
         }
         logPosition();
         move();

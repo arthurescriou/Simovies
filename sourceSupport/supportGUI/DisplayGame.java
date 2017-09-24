@@ -10,6 +10,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
+import algorithms.BrainDetectScout;
 import algorithms.BrainDetectScoutMaster;
 import robotsimulator.Bot;
 import robotsimulator.Bullet;
@@ -210,13 +211,15 @@ public class DisplayGame extends javax.swing.JPanel {
 
         g2d = ((Graphics2D) g.create());
 
-        for (int j = 6; j < 10; j++) {
-            //TODO separate into multiple fori and make accessors available from Brains
-            double tempX = BrainDetectScoutMaster.getInstance().get(j-6).getPosX();
-            double tempY = BrainDetectScoutMaster.getInstance().get(j-6).getPosY();
-            double x = (tempX - 50) * zoomFactor + xModifier;
-            double y = (tempY - 50) * zoomFactor + yModifier;
-            g2d.drawRect((int) Math.round(x), (int) Math.round(y), 40, 40);
+        if(BrainDetectScoutMaster.getInstance().getSize() >0) {
+            for (int j = 6; j < 10; j++) {
+                //TODO separate into multiple fori and make accessors available from Brains
+                double tempX = BrainDetectScoutMaster.getInstance().get(j - 6).getPosX();
+                double tempY = BrainDetectScoutMaster.getInstance().get(j - 6).getPosY();
+                double x = (tempX - 50) * zoomFactor + xModifier;
+                double y = (tempY - 50) * zoomFactor + yModifier;
+                g2d.drawRect((int) Math.round(x), (int) Math.round(y), 40, 40);
+            }
         }
 
         for (int i = 0; i < lines.size(); i++) {

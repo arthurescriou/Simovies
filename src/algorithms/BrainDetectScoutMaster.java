@@ -7,22 +7,27 @@ import java.util.ArrayList;
 
 public class BrainDetectScoutMaster {
 
-   private static BrainDetectScoutMaster instance = new BrainDetectScoutMaster();
+    private static BrainDetectScoutMaster instance = new BrainDetectScoutMaster();
     private ArrayList<BrainDetectScout> scouts;
 
-    private BrainDetectScoutMaster(){
+    private BrainDetectScoutMaster() {
         scouts = new ArrayList<>();
     }
 
     public static BrainDetectScoutMaster getInstance() {
         return instance;
     }
+
     public void add(BrainDetectScout bds) {
         scouts.add(bds);
     }
 
     public BrainDetectScout get(int i) {
         return scouts.get(i);
+    }
+
+    public int getSize() {
+        return scouts.size();
     }
 
     public void remove(int i) {
