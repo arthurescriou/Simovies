@@ -1,6 +1,9 @@
 package robotsimulator;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+
+import characteristics.IRadarResult;
 
 public class SimulatorEngine {
 
@@ -281,8 +284,7 @@ public class SimulatorEngine {
     }
 
     protected ArrayList<characteristics.IRadarResult> detectRadar(double range, Bot bot) {
-        ArrayList<characteristics.IRadarResult> result = new ArrayList();
-
+        ArrayList<IRadarResult> result = new ArrayList();
         Coordinates me = new Coordinates(bot.getX(), bot.getY());
         for (Bot b : bots)
             if ((b.getX() != bot.getX()) || (b.getY() != bot.getY())) {

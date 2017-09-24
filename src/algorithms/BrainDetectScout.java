@@ -43,7 +43,9 @@ public class BrainDetectScout extends Brain {
         if (getHeading() == EAST)
             gauche = true;
 
+        System.out.println("size of rader detected "+ detectRadar().size());
         for (IRadarResult r : detectRadar()) {
+            System.out.println("\t "+r.getObjectType()+" "+r.getObjectDirection());
             if (r.getObjectDirection() == SOUTH)
                 haut = true;
 
@@ -96,6 +98,7 @@ public class BrainDetectScout extends Brain {
                 }
         boolean collision = false;
         int i = 0;
+
         for (IRadarResult r : detectRadar()) {
             Double radius = 0.0;
             switch (r.getObjectType()) {
@@ -133,6 +136,7 @@ public class BrainDetectScout extends Brain {
         move();
 
     }
+
 
     private void logPosition() {
         sendLogMessage(name + " x:" + posX + " y:" + posY);
