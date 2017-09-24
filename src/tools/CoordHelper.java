@@ -35,12 +35,16 @@ public class CoordHelper {
     }
 
     public static Point polToCart(double origX, double origY, double angle, double dist) {
-        long x = max(round(origX + (dist * cos(angle))),3000);
-        long y = max(round(origY + (dist * sin(angle))),2000);
+        long x = round(origX + (dist * cos(angle)));
+        x = (x > 3000) ? 3000 : x;
+        x = (x < 0) ? 0: x;
+        long y = min(round(origY + (dist * sin(angle))), 2000);
+        y = (y > 2000) ? 2000 : y;
+        y = (y < 0) ? 0: y;
         return new Point((int) x, (int) y);
     }
 
     public static Point polToCart(Point orig, double angle, double dist) {
-        return polToCart(orig.x , orig.y, angle, dist);
+        return polToCart(orig.x, orig.y, angle, dist);
     }
 }

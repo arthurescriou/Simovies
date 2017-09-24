@@ -91,7 +91,7 @@ public class Parameters {
                              teamBSecondaryBot2InitX = 2500, //1 unit = 1mm, coordinate of central point
                              teamBSecondaryBot2InitY = 1200, //1 unit = 1mm, coordinate of central point
                              teamBSecondaryBot2InitHeading = WEST; //clockwise trigonometric unit, according to screen pixel coordinate reference
-  
+
   //-----------------------//
   //---BULLET-PARAMETERS---//
   //-----------------------//
@@ -100,4 +100,18 @@ public class Parameters {
                              bulletRadius=5,
                              bulletRange=1000;
   public static final int bulletFiringLatency=20;
+
+    public static final double getRadius(boolean main, boolean teamGauche) {
+        if (main) {
+            if(teamGauche)
+                return teamAMainBotRadius;
+            else
+                return teamBMainBotRadius;
+        }else{
+            if(teamGauche)
+                return teamASecondaryBotRadius;
+            else
+                return teamBSecondaryBotRadius;
+        }
+    }
 }
