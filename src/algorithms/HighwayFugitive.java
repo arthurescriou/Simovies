@@ -13,7 +13,7 @@ import characteristics.Parameters;
 import characteristics.IFrontSensorResult;
 import characteristics.IRadarResult;
 
-public class HighwayFugitive extends Brain {
+public class HighwayFugitive extends BrainDetectScout {
   //---PARAMETERS---//
   private static final double HEADINGPRECISION = 0.001;
 
@@ -28,6 +28,7 @@ public class HighwayFugitive extends Brain {
 
   //---ABSTRACT-METHODS-IMPLEMENTATION---//
   public void activate() {
+    super.activate();
     turnTask=true;
     moveTask=false;
     firstMove=true;
@@ -39,7 +40,6 @@ public class HighwayFugitive extends Brain {
     lastShot=Math.random()*Math.PI*2;
     if (turnRight) stepTurn(Parameters.Direction.RIGHT);
     else stepTurn(Parameters.Direction.LEFT);
-    sendLogMessage("Turning point. Waza!");
   }
   public void step() {
     if (Math.random()<0.01) {
@@ -57,7 +57,6 @@ public class HighwayFugitive extends Brain {
         endTaskDirection+=getHeading();
         if (turnRight) stepTurn(Parameters.Direction.RIGHT);
         else stepTurn(Parameters.Direction.LEFT);
-        sendLogMessage("Turning point. Waza!");
       } else {
         endTaskCounter--;
         if (Math.random()<0.1) {
@@ -102,14 +101,12 @@ public class HighwayFugitive extends Brain {
           moveTask=true;
           endTaskCounter=400;
 	  move();
-          sendLogMessage("Moving a head. Waza!");
           return;
         }
 	turnTask=false;
         moveTask=true;
         endTaskCounter=100;
 	move();
-        sendLogMessage("Moving a head. Waza!");
       } else {
         if (turnRight) stepTurn(Parameters.Direction.RIGHT);
         else stepTurn(Parameters.Direction.LEFT);
@@ -135,7 +132,6 @@ public class HighwayFugitive extends Brain {
         endTaskDirection+=getHeading();
         if (turnRight) stepTurn(Parameters.Direction.RIGHT);
         else stepTurn(Parameters.Direction.LEFT);
-        sendLogMessage("Turning point. Waza!");
       } else {
         endTaskCounter--;
         move();

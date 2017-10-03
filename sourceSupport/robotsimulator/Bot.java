@@ -103,7 +103,8 @@ public class Bot
     }
   }
   
-  protected void moveBack() { double newX = x - speed * Math.cos(angle);
+  protected void moveBack() {
+    double newX = x - speed * Math.cos(angle);
     double newY = y - speed * Math.sin(angle);
     if ((newX >= radius) && (newX <= engine.getWorld().getWidth() - radius) && (newY >= radius) && (newY <= engine.getWorld().getHeight() - radius)) {
       boolean doIt = true;

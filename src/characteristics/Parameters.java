@@ -40,8 +40,8 @@ public class Parameters {
                              teamAMainBot3InitY = 1200, //1 unit = 1mm, coordinate of central point
                              teamAMainBot3InitHeading = EAST; //clockwise trigonometric unit, according to screen pixel coordinate reference
 
-  public static final String teamASecondaryBotBrainClassName = "algorithms.BrainDetectScout"; //class given by name; is supposed to extends robotsimulator.Brain
-  public static final String teamASecondaryBotAvatar = "avatars/round.png"; //path relative to location of ant build.xml file
+  public static final String teamASecondaryBotBrainClassName = "algorithms.HighwayFugitive"; //class given by name; is supposed to extends robotsimulator.Brain
+  public static final String teamASecondaryBotAvatar = "avatars/ethereum.png"; //path relative to location of ant build.xml file
   public static final double teamASecondaryBotRadius = 50, //1 unit = 1mm, body radius
                              teamASecondaryBotFrontalDetectionRange = 500, //1 unit = 1mm, range of frontal sensor
                              teamASecondaryBotFrontalDetectionAngle = 0, //UNUSED AT THE MOMENT, frontal sensor detection angle is suppoed to be absolute
@@ -60,7 +60,7 @@ public class Parameters {
   //-----------------------//
   public static final String teamBName = "Old and Useless";
   public static final String teamBMainBotBrainClassName = "algorithms.FighterBrain"; //class given by name; is supposed to extends robotsimulator.Brain
-  public static final String teamBMainBotAvatar = "avatars/round.png"; //path relative to location of ant build.xml file
+  public static final String teamBMainBotAvatar = "avatars/dollar.png"; //path relative to location of ant build.xml file
   public static final double teamBMainBotRadius = 50, //1 unit = 1mm, body radius
                              teamBMainBotFrontalDetectionRange = 300, //1 unit = 1mm, range of frontal sensor
                              teamBMainBotFrontalDetectionAngle = 0, //UNUSED AT THE MOMENT, frontal sensor detection angle is suppoed to be absolute
@@ -77,7 +77,7 @@ public class Parameters {
                              teamBMainBot3InitY = 1200, //1 unit = 1mm, coordinate of central point
                              teamBMainBot3InitHeading = WEST; //clockwise trigonometric unit, according to screen pixel coordinate reference
 
-  public static final String teamBSecondaryBotBrainClassName = "algorithms.BrainDetectScout"; //class given by name; is supposed to extends robotsimulator.Brain
+  public static final String teamBSecondaryBotBrainClassName = "algorithms.HighwayFugitive"; //class given by name; is supposed to extends robotsimulator.Brain
   public static final String teamBSecondaryBotAvatar = "avatars/euro.png"; //path relative to location of ant build.xml file
   public static final double teamBSecondaryBotRadius = 50, //1 unit = 1mm, body radius
                              teamBSecondaryBotFrontalDetectionRange = 500, //1 unit = 1mm, range of frontal sensor

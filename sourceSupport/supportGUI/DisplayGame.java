@@ -338,9 +338,8 @@ public class DisplayGame extends javax.swing.JPanel {
             c.draw(g2d, xModifier, yModifier, zoomFactor, 20);
         }
 
-
         for (Position position : MasterMind.getInstance().getTarget()) {
-
+            System.out.println(position);
             double xx = (position.getX() - 50) * zoomFactor + xModifier;
             double yy = (position.getY() - 50) * zoomFactor + yModifier;
             Color col = null;

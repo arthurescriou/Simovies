@@ -9,7 +9,7 @@ import java.util.Random;
 import characteristics.*;
 import robotsimulator.Brain;
 
-public class FighterBrain extends Brain {
+public class FighterBrain extends BrainDetectTank {
 
     // ---PARAMETERS---//
     private static final double HEADINGPRECISION = 0.001;
@@ -40,6 +40,7 @@ public class FighterBrain extends Brain {
 
     // ---ABSTRACT-METHODS-IMPLEMENTATION---//
     public void activate() {
+        super.activate();
         // ODOMETRY CODE
         whoAmI = lol++;
 //        MasterMind.getInstance().addTanks(this);
@@ -53,6 +54,7 @@ public class FighterBrain extends Brain {
     }
 
     public void step() {
+        super.step();
         ArrayList<IRadarResult> radarResults;
         if (getHealth() <= 0)
             return;
@@ -62,10 +64,6 @@ public class FighterBrain extends Brain {
             }
             if (isSameDirection(getHeading(), Parameters.EAST))
                 distLateral++;
-            sendLogMessage("J'ai ca " + String.format("%.2f", distLateral) + " et " + String.format("%.2f", distTop)
-                            + " Head " + String.format("%.2f", getHeading()) + "\n N " + String
-                            .format("%.2f", Parameters.NORTH)
-                            + " L " + String.format("%.2f", Parameters.EAST));
         }
         //AUTOMATON
         /*** Permet de reculer lorsque trop rpes ***/
@@ -117,11 +115,9 @@ public class FighterBrain extends Brain {
                 if (r.getObjectType() == IRadarResult.Types.Wreck && r.getObjectDistance() <= r
                                 .getObjectRadius() + Parameters.teamAMainBotRadius + 80) {
                     dodgeObstacle(r.getObjectDirection(), r.getObjectDistance());
-                    System.out.println("Je detecte wreck");
                     return;
                 }
             }
-            System.out.println("Je detecte un mur");
             dodgeObstacle();
             return;
         }
@@ -147,12 +143,10 @@ public class FighterBrain extends Brain {
                 if (r.getObjectType() == IRadarResult.Types.TeamMainBot
                                 || r.getObjectType() == IRadarResult.Types.TeamSecondaryBot) {
                     if (isInFrontOfMe(r.getObjectDirection()) && enemyFighters + enemyPatrols == 0) {
-                        System.out.println("Je ne dois pas tire");
                         doNotShoot = true;
                     }
                     if (r.getObjectDistance() <= r.getObjectRadius() + Parameters.teamAMainBotRadius + 80) {
                         dodgeObstacle(r.getObjectDirection(), r.getObjectDistance());
-                        System.out.println("Je dois esquive un allie");
                         return;
                     }
                 }
@@ -162,7 +156,6 @@ public class FighterBrain extends Brain {
                                 .getObjectType() == IRadarResult.Types.Wreck) {
                     if (r.getObjectDistance() <= r
                                     .getObjectRadius() + Parameters.teamAMainBotRadius + 20 && !dodgeTask) {
-                        System.out.println("Je dois recule");
                         moveBackTast(r.getObjectDirection());
                         return;
                     }
@@ -171,7 +164,6 @@ public class FighterBrain extends Brain {
 
             /*** Comporte de base lorsque dennemi detecte ***/
             if (enemyFighters + enemyPatrols > 0) {
-                System.out.println("Jattaque");
                 attack(enemyDirection);
                 return;
             }
@@ -229,10 +221,8 @@ public class FighterBrain extends Brain {
 
     private void moveBackTast(double pos) {
         if (isDerriere(pos)) {
-            System.out.println("Je vais devant");
             moveFrontTask = true;
         } else {
-            System.out.println("Je vais derriere");
             moveBackTask = true;
         }
         nbTurns = rand.nextInt(40);
@@ -284,9 +274,6 @@ public class FighterBrain extends Brain {
     private boolean isDevant(double pos) {
         double heading = getHeading();
         double left = 0.5 * Math.PI;
-        System.out.println("POs = " + pos + " HEADING " + heading + " Left " + ((heading + left) % (2 * Math.PI)) + "" +
-                        " right " + ((heading - left) % (2 * Math.PI)) + " res " + (pos <= (heading + left) % (2 *
-                        Math.PI) && pos >= (heading - left) % (2 * Math.PI)));
         return pos <= (heading + left) % (2 * Math.PI) && pos >= (heading - left) % (2 * Math.PI);
     }
 
@@ -297,8 +284,7 @@ public class FighterBrain extends Brain {
     private boolean isAGauche(double pos) {
         double heading = getHeading();
         double left = Math.PI;
-        System.out.println("POs = " + pos + " HEADING " + heading + " Right " + (heading) + " Left " + ((heading - left)) + " resultat = " + (pos <= heading && pos >= (heading - left)));
-        return pos <= heading % (2 * Math.PI) && pos >= (heading - left) % (2 * Math.PI);
+         return pos <= heading % (2 * Math.PI) && pos >= (heading - left) % (2 * Math.PI);
     }
 
     private boolean isADroite(double pos) {

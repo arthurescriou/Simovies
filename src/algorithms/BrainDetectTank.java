@@ -8,32 +8,33 @@ package algorithms;
 
 import static characteristics.IRadarResult.Types.BULLET;
 import static characteristics.IRadarResult.Types.OpponentMainBot;
-import static characteristics.Parameters.EAST;
-import static characteristics.Parameters.NORTH;
-import static characteristics.Parameters.SOUTH;
-import static characteristics.Parameters.WEST;
+import static characteristics.Parameters.*;
 import static java.lang.Math.abs;
+import static java.lang.Math.random;
 import static java.lang.Math.sin;
+import static tools.CoordHelper.*;
 
 import java.util.*;
 
 import characteristics.*;
 import robotsimulator.*;
+import tools.CartCoordinate;
+import tools.CoordHelper;
 
-public class BrainDetectTank extends Brain {
-
-    private String name;
+public abstract class BrainDetectTank extends DetectBrain {
+    private boolean first = false;
 
     private static List<IRadarResult.Types> BOTS_ENNEMY = Arrays
                     .asList(IRadarResult.Types.OpponentMainBot, IRadarResult.Types.OpponentSecondaryBot);
-    private double posX;
-    private double posY;
 
     public void activate() {
+        moveSpeed = teamAMainBotSpeed;
+
         int auDessus = 0;
         int enDessous = 0;
         boolean gauche = false;
         boolean droite = false;
+        MasterMind.getInstance().addTanks(this);
 
         if (getHeading() == WEST)
             droite = true;
@@ -48,101 +49,55 @@ public class BrainDetectTank extends Brain {
         }
 
         if (auDessus == 0) {
+            first = true;
             if (gauche) {
                 name = "thg";
-                posX = Parameters.teamAMainBot1InitX;
-                posY = Parameters.teamAMainBot1InitY;
-                sendLogMessage("thg " +posX +" "+posY);
+                myPosition = new CartCoordinate(Parameters.teamAMainBot1InitX + 50, Parameters.teamAMainBot1InitY + 50);
             }
             if (droite) {
                 name = "thd";
-                posX = Parameters.teamBMainBot1InitX;
-                posY = Parameters.teamBMainBot1InitY;
-                sendLogMessage("thd " +posX +" "+posY);
+                myPosition = new CartCoordinate(Parameters.teamBMainBot1InitX + 50, Parameters.teamBMainBot1InitY + 50);
             }
         }
         if (auDessus == 1 && enDessous == 1) {
             if (gauche) {
                 name = "tmg";
-                posX = Parameters.teamAMainBot2InitX;
-                posY = Parameters.teamAMainBot2InitY;
-                sendLogMessage("tmg " +posX +" "+posY);
+                myPosition = new CartCoordinate(Parameters.teamAMainBot2InitX + 50, Parameters.teamAMainBot2InitY + 50);
             }
             if (droite) {
                 name = "tmd";
-                posX = Parameters.teamBMainBot2InitX;
-                posY = Parameters.teamBMainBot2InitY;
-                sendLogMessage("tmd " +posX +" "+posY);
+                myPosition = new CartCoordinate(Parameters.teamBMainBot2InitX + 50, Parameters.teamBMainBot2InitY + 50);
             }
         }
         if (enDessous == 0) {
             if (gauche) {
                 name = "tbg";
-                posX = Parameters.teamAMainBot3InitX;
-                posY = Parameters.teamAMainBot3InitY;
-                sendLogMessage("tbg " +posX +" "+posY);
+                myPosition = new CartCoordinate(Parameters.teamAMainBot3InitX + 50, Parameters.teamAMainBot3InitY + 50);
             }
             if (droite) {
                 name = "tbd";
-                posX = Parameters.teamBMainBot3InitX;
-                posY = Parameters.teamBMainBot3InitY;
-                sendLogMessage("tbd " +posX +" "+posY);
+                myPosition = new CartCoordinate(Parameters.teamBMainBot3InitX + 50, Parameters.teamBMainBot3InitY + 50);
             }
         }
 
     }
 
+    @Override
     public void step() {
-//
-//        if (name.contains("g")) {
-//            if (!detectRadar().isEmpty()) {
-//                IRadarResult r = detectRadar().stream().filter(ir -> ir.getObjectType().equals(BULLET)).findFirst()
-//                                .orElse(null);
-//                if (r != null) {
-//                    System.out.println(r);
-//                    fire(r.getObjectDirection());
-//                    return;
-//                }
-//
-//            }
-//
-//        }
-//
-//        if (!detectRadar().isEmpty()) {
-//            IRadarResult r = detectRadar().stream().filter(ir -> ir.getObjectType().equals(OpponentMainBot)).findFirst()
-//                            .orElse(null);
-//            if (r != null) {
-//                System.out.println(r);
-//                fire(r.getObjectDirection());
-//                return;
-//            }
-//
-//        }
-//
-//        if (name.equals("thg")) {
-//            sendLogMessage("Je suis le haut gauche et je tourne vers la gauche");
-//            stepTurn(Parameters.Direction.LEFT);
-//        }
-//        if (name.equals("tmg")) {
-//            sendLogMessage("Je suis le mid guache");
-//            //move();
-//        }
-//        if (name.equals("tbg")) {
-//            sendLogMessage("Je suis le bas gayche et je tourne vers la droite");
-//            stepTurn(Parameters.Direction.RIGHT);
-//        }
-//        if (name.equals("thd")) {
-//            sendLogMessage("Je suis le haut droit et je tourne vers la gauche");
-//            stepTurn(Parameters.Direction.LEFT);
-//        }
-//        if (name.equals("tmd")) {
-//            sendLogMessage("Je suis le mid droit");
-//            move();
-//        }
-//        if (name.equals("tbd")) {
-//            sendLogMessage("Je suis le bas droit et je tourne vers la droite");
-//            stepTurn(Parameters.Direction.RIGHT);
-//        }
+        if (first)
+            MasterMind.getInstance().updateWarField();
     }
+
+    @Override
+    public CartCoordinate getPos() {
+        return myPosition;
+    }
+
+    @Override
+    public ArrayList<IRadarResult> getReport() {
+        return detectRadar();
+    }
+
+
 
 }

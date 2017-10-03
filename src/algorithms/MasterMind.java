@@ -48,8 +48,17 @@ public class MasterMind {
         tmp.addAll(tanks);
         target.clear();
         for (Brain bot : tmp) {
-            ArrayList<IRadarResult> report = ((BrainDetectScout) bot).getReport();
-            CartCoordinate pos = ((BrainDetectScout) bot).getPos();
+            ArrayList<IRadarResult> report = null;
+            CartCoordinate pos = null;
+
+            if (bot instanceof DetectBrain) {
+
+                DetectBrain brainDetectScout = (DetectBrain) bot;
+                report = brainDetectScout.getReport();
+                pos = brainDetectScout.getPos();
+            }
+
+
             for (IRadarResult r : report) {
                 CartCoordinate rPos = CoordHelper
                                 .polToCart(pos, r.getObjectDirection(), r.getObjectDistance());
