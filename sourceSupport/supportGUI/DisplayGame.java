@@ -214,8 +214,9 @@ public class DisplayGame extends javax.swing.JPanel {
         if(BrainDetectScoutMaster.getInstance().getSize() >0) {
             for (int j = 6; j < 10; j++) {
                 //TODO separate into multiple fori and make accessors available from Brains
-                double tempX = BrainDetectScoutMaster.getInstance().get(j - 6).getPosX();
-                double tempY = BrainDetectScoutMaster.getInstance().get(j - 6).getPosY();
+
+                double tempX = BrainDetectScoutMaster.getInstance().get(j - 6).getPosition().getX();
+                double tempY = BrainDetectScoutMaster.getInstance().get(j - 6).getPosition().getY();
                 double x = (tempX - 50) * zoomFactor + xModifier;
                 double y = (tempY - 50) * zoomFactor + yModifier;
                 g2d.drawRect((int) Math.round(x), (int) Math.round(y), 40, 40);

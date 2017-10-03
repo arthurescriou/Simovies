@@ -7,6 +7,7 @@ import static java.lang.Math.sqrt;
 
 import java.awt.*;
 
+
 public class CartCoordinate {
     double x;
     double y;
@@ -34,4 +35,6 @@ public class CartCoordinate {
     public double getY() {
         return y;
     }
+
+    public double dotProduct(CartCoordinate q) { return this.x * q.getX() + this.y * q.getY(); }
 }

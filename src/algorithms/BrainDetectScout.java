@@ -6,12 +6,15 @@
  * ******************************************************/
 package algorithms;
 
+import static characteristics.Parameters.*;
 import static characteristics.Parameters.EAST;
 import static characteristics.Parameters.NORTH;
 import static characteristics.Parameters.SOUTH;
 import static characteristics.Parameters.WEST;
+import static characteristics.Parameters.teamASecondaryBotRadius;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
+import static java.lang.Math.random;
 import static java.lang.Math.sin;
 import static java.text.MessageFormat.format;
 
@@ -19,8 +22,11 @@ import java.awt.*;
 import java.text.MessageFormat;
 import java.util.*;
 
+import javax.print.attribute.standard.PageRanges;
+import javax.smartcardio.Card;
+
 import characteristics.*;
-import robotsimulator.Brain;
+import robotsimulator.*;
 import tools.CartCoordinate;
 import tools.CoordHelper;
 
@@ -28,12 +34,14 @@ public class BrainDetectScout extends Brain {
 
     private double cpt = 0;
     private String name;
-    private double posX;
-    private double posY;
+    private CartCoordinate myPosition;
     private boolean teamGauche;
-    private double moveSpeed = Parameters.teamASecondaryBotSpeed;
+    private double moveSpeed = teamASecondaryBotSpeed;
 
     public void activate() {
+
+
+        Parameters.
         BrainDetectScoutMaster.getInstance().add(this);
         boolean haut = false;
         boolean bas = false;
@@ -45,9 +53,7 @@ public class BrainDetectScout extends Brain {
         if (getHeading() == EAST)
             gauche = true;
 
-        System.out.println("size of rader detected "+ detectRadar().size());
         for (IRadarResult r : detectRadar()) {
-            System.out.println("\t "+r.getObjectType()+" "+r.getObjectDirection());
             if (r.getObjectDirection() == SOUTH)
                 haut = true;
 
@@ -60,16 +66,14 @@ public class BrainDetectScout extends Brain {
             if (gauche) {
                 name = "schg";
                 teamGauche = true;
-                posX = Parameters.teamASecondaryBot1InitX;
-                posY = Parameters.teamASecondaryBot1InitY;
+                myPosition = new CartCoordinate(teamASecondaryBot1InitX, teamASecondaryBot1InitY);
                 logPosition();
             }
 
             if (droite) {
                 name = "schd";
                 teamGauche = false;
-                posX = Parameters.teamBSecondaryBot1InitX;
-                posY = Parameters.teamBSecondaryBot1InitY;
+                myPosition = new CartCoordinate(teamBSecondaryBot1InitX, teamBSecondaryBot1InitY);
                 logPosition();
             }
         }
@@ -77,61 +81,59 @@ public class BrainDetectScout extends Brain {
             if (gauche) {
                 name = "scbg";
                 teamGauche = true;
-                posX = Parameters.teamASecondaryBot2InitX;
-                posY = Parameters.teamASecondaryBot2InitY;
+                myPosition = new CartCoordinate(teamASecondaryBot2InitX, teamASecondaryBot2InitY);
                 logPosition();
             }
             if (droite) {
                 name = "scbd";
                 teamGauche = false;
-                posX = Parameters.teamBSecondaryBot2InitX;
-                posY = Parameters.teamBSecondaryBot2InitY;
+                myPosition = new CartCoordinate(teamBSecondaryBot2InitX, teamBSecondaryBot2InitY);
                 logPosition();
             }
         }
 
     }
 
+    public CartCoordinate getPosition() {
+        return myPosition;
+    }
+
     public void step() {
-                if (cpt <0){
-                    cpt++;
-                    stepTurn(Parameters.Direction.RIGHT);
-                    return;
-                }
+
+        if (random() < 0.5) {
+            if (random() < 0.5) {
+                stepTurn(Direction.RIGHT);
+            } else {
+                stepTurn(Direction.LEFT);
+            }
+            return;
+        }
         boolean collision = false;
+        if (detectFront().getObjectType() == IFrontSensorResult.Types.WALL) {
+            stepTurn(Direction.RIGHT);
+            return;
+        }
 
         for (IRadarResult r : detectRadar()) {
-            Double radius = 0.0;
+            CartCoordinate position = null;
+            double d = Double.MAX_VALUE;
             switch (r.getObjectType()) {
 
                 case OpponentMainBot:
-                    radius = Parameters.getRadius(true, !teamGauche);
-                    break;
                 case OpponentSecondaryBot:
-                    radius = Parameters.getRadius(false, !teamGauche);
-                    break;
                 case TeamMainBot:
-                    radius = Parameters.getRadius(true, teamGauche);
-                    break;
                 case TeamSecondaryBot:
-                    radius = Parameters.getRadius(false, teamGauche);
-                    break;
                 case Wreck:
-                    //TODO
-                    radius = Parameters.getRadius(true, !teamGauche);
+                    d= r.getObjectDistance() ;
                     break;
             }
-            if (detectFront().getObjectType() == IFrontSensorResult.Types.WALL) {
-                return;
+            if (!collision) {
+                collision = d < 2.1 * Parameters.teamASecondaryBotRadius;
             }
-            if (r.getObjectDistance() < radius * 2.5)
-                collision = true;
         }
 
         if (!collision) {
-            CartCoordinate newPos = CoordHelper.polToCart(posX, posY, getHeading(), moveSpeed);
-            posX = newPos.getX();
-            posY = newPos.getY();
+            myPosition = CoordHelper.polToCart(myPosition, getHeading(), moveSpeed);
         }
         logPosition();
         move();
@@ -142,15 +144,7 @@ public class BrainDetectScout extends Brain {
         return name;
     }
 
-    public double getPosX() {
-        return posX;
-    }
-
-    public double getPosY() {
-        return posY;
-    }
-
     private void logPosition() {
-        sendLogMessage(name + " x:" + posX + " y:" + posY);
+        sendLogMessage(name + " x:" + myPosition.getX() + " y:" + myPosition.getY());
     }
 }
