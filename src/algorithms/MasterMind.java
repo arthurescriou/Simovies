@@ -5,6 +5,7 @@ package algorithms;
 
 import static java.lang.Math.round;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import characteristics.IRadarResult;
@@ -18,6 +19,7 @@ public class MasterMind {
 
     private static MasterMind instance = new MasterMind();
     private Position[][] warField;
+    private ArrayList<Position> target = new ArrayList<>();
     private ArrayList<Brain> scouts = new ArrayList<>(2);
     private ArrayList<Brain> tanks = new ArrayList<>(3);
 
@@ -31,6 +33,9 @@ public class MasterMind {
         }
     }
 
+    public ArrayList<Position> getTarget() {
+        return target;
+    }
 
     public Position[][] getWarField() {
         return warField;
@@ -41,7 +46,7 @@ public class MasterMind {
         ArrayList<Brain> tmp = new ArrayList<>();
         tmp.addAll(scouts);
         tmp.addAll(tanks);
-
+        target.clear();
         for (Brain bot : tmp) {
             ArrayList<IRadarResult> report = ((BrainDetectScout) bot).getReport();
             CartCoordinate pos = ((BrainDetectScout) bot).getPos();
@@ -61,7 +66,8 @@ public class MasterMind {
                         radius = Parameters.bulletRadius;
                         break;
                 }
-                updatePart(rPos, radius, r.getObjectType());
+//                updatePart(rPos, radius, r.getObjectType());
+                    target.add(new Position(rPos.getX(),rPos.getY(),r.getObjectType()));
             }
         }
     }

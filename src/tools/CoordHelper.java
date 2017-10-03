@@ -8,10 +8,7 @@ import static java.lang.Math.cos;
 import static java.lang.Math.round;
 import static java.lang.Math.sin;
 
-import java.awt.*;
-import java.awt.geom.Point2D.Double;
 
-import javafx.util.Pair;
 
 public class CoordHelper {
 

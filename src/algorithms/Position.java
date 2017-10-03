@@ -18,6 +18,12 @@ public class Position {
         types = null;
     }
 
+    public Position(double x, double y, RadarResult.Types types) {
+        this.x = x;
+        this.y = y;
+        this.types = types;
+    }
+
     public void setTypes(RadarResult.Types types) {
         this.types = types;
     }

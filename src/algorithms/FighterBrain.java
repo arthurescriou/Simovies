@@ -10,6 +10,7 @@ import characteristics.*;
 import robotsimulator.Brain;
 
 public class FighterBrain extends Brain {
+
     // ---PARAMETERS---//
     private static final double HEADINGPRECISION = 0.001;
     private static final double ANGLEPRECISION = 0.1;
@@ -17,7 +18,10 @@ public class FighterBrain extends Brain {
     private static final int CARREFOUR = 0x5EC0;
     private static final int DARTY = 0x333;
     private static final int UNDEFINED = 0xBADC0DE;
-    enum BOUSSOLE { DEVANT, DERRIERE, GAUCHE, DROITE};
+
+    enum BOUSSOLE {DEVANT, DERRIERE, GAUCHE, DROITE}
+
+    ;
     // ---VARIABLES---//
     private boolean dodgeLeftTask, dodgeRightTask, dodgeTask, moveFrontTask, moveBackTask;
     private double distLateral, distTop;
@@ -26,16 +30,19 @@ public class FighterBrain extends Brain {
     private boolean doNotShoot;
     private int nbTurns = 0;
     private static Random rand = new Random();
+
     // ---CONSTRUCTORS---//
     public FighterBrain() {
         super();
     }
-    private static int  lol = 0;
+
+    private static int lol = 0;
+
     // ---ABSTRACT-METHODS-IMPLEMENTATION---//
     public void activate() {
         // ODOMETRY CODE
         whoAmI = lol++;
-
+//        MasterMind.getInstance().addTanks(this);
         // INIT
         moveFrontTask = false;
         moveBackTask = false;
@@ -56,12 +63,13 @@ public class FighterBrain extends Brain {
             if (isSameDirection(getHeading(), Parameters.EAST))
                 distLateral++;
             sendLogMessage("J'ai ca " + String.format("%.2f", distLateral) + " et " + String.format("%.2f", distTop)
-                            + " Head " + String.format("%.2f", getHeading()) + "\n N " + String.format("%.2f", Parameters.NORTH)
+                            + " Head " + String.format("%.2f", getHeading()) + "\n N " + String
+                            .format("%.2f", Parameters.NORTH)
                             + " L " + String.format("%.2f", Parameters.EAST));
         }
         //AUTOMATON
         /*** Permet de reculer lorsque trop rpes ***/
-        if(moveBackTask && nbTurns == 0){
+        if (moveBackTask && nbTurns == 0) {
             moveBackTask = false;
             dodgeObstacle();
         }
@@ -72,7 +80,7 @@ public class FighterBrain extends Brain {
         }
 
         /*** Permet de reculer lorsque trop rpes ***/
-        if(moveFrontTask && nbTurns == 0){
+        if (moveFrontTask && nbTurns == 0) {
             moveFrontTask = false;
         }
         if (moveFrontTask && nbTurns > 0) {
@@ -91,7 +99,7 @@ public class FighterBrain extends Brain {
          * jusqu'a atteindre le NORD
          ***/
         if (dodgeTask && nbTurns > 0) {
-            if(dodgeLeftTask)
+            if (dodgeLeftTask)
                 stepTurn(Parameters.Direction.LEFT);
             else
                 stepTurn(Parameters.Direction.RIGHT);
@@ -103,9 +111,11 @@ public class FighterBrain extends Brain {
          * Si le robot n'est pas en mode tourner et qu'il detecte un wall alors
          * tourne a gauche
          ***/
-        if ((detectFront().getObjectType() == IFrontSensorResult.Types.WALL ||  detectFront().getObjectType() == IFrontSensorResult.Types.Wreck)) {
+        if ((detectFront().getObjectType() == IFrontSensorResult.Types.WALL || detectFront()
+                        .getObjectType() == IFrontSensorResult.Types.Wreck)) {
             for (IRadarResult r : detectRadar()) {
-                if(r.getObjectType() == IRadarResult.Types.Wreck && r.getObjectDistance() <= r.getObjectRadius() + Parameters.teamAMainBotRadius + 80 ){
+                if (r.getObjectType() == IRadarResult.Types.Wreck && r.getObjectDistance() <= r
+                                .getObjectRadius() + Parameters.teamAMainBotRadius + 80) {
                     dodgeObstacle(r.getObjectDirection(), r.getObjectDistance());
                     System.out.println("Je detecte wreck");
                     return;
@@ -147,8 +157,11 @@ public class FighterBrain extends Brain {
                     }
                 }
                 /** Reculer si trop proche **/
-                if(r.getObjectType() == IRadarResult.Types.TeamMainBot || r.getObjectType() == IRadarResult.Types.TeamSecondaryBot || r.getObjectType() == IRadarResult.Types.Wreck){
-                    if(r.getObjectDistance() <= r.getObjectRadius() + Parameters.teamAMainBotRadius + 20 && !dodgeTask){
+                if (r.getObjectType() == IRadarResult.Types.TeamMainBot || r
+                                .getObjectType() == IRadarResult.Types.TeamSecondaryBot || r
+                                .getObjectType() == IRadarResult.Types.Wreck) {
+                    if (r.getObjectDistance() <= r
+                                    .getObjectRadius() + Parameters.teamAMainBotRadius + 20 && !dodgeTask) {
                         System.out.println("Je dois recule");
                         moveBackTast(r.getObjectDirection());
                         return;
@@ -166,86 +179,88 @@ public class FighterBrain extends Brain {
 
         /*** DEFAULT COMPORTEMENT ***/
         double randDouble = Math.random();
-        if(randDouble <= 0.60){
+        if (randDouble <= 0.60) {
             move();
             return;
         }
-        if(randDouble <= 0.80){
+        if (randDouble <= 0.80) {
             stepTurn(Parameters.Direction.LEFT);
             return;
         }
-        if(randDouble <= 1.00 ){
+        if (randDouble <= 1.00) {
             stepTurn(Parameters.Direction.RIGHT);
             return;
         }
     }
 
-
-    private void dodgeObstacle(){
+    private void dodgeObstacle() {
         dodgeTask = true;
-        if(Math.random() > 0.5){
+        if (Math.random() > 0.5) {
             dodgeLeftTask = true;
-        }else{
+        } else {
             dodgeRightTask = true;
         }
         nbTurns = rand.nextInt(40);
     }
-    private void dodgeObstacle(double pos, double distance){
+
+    private void dodgeObstacle(double pos, double distance) {
         dodgeTask = true;
-        if(isADroite(pos) && isDevant(pos)){
+        if (isADroite(pos) && isDevant(pos)) {
             dodgeLeftTask = true;
             nbTurns = rand.nextInt(40);
             return;
         }
-        if(isAGauche(pos) && isDevant(pos)){
+        if (isAGauche(pos) && isDevant(pos)) {
             dodgeRightTask = true;
             nbTurns = rand.nextInt(40);
             return;
         }
-        if(isDevant(pos)){
+        if (isDevant(pos)) {
             moveBackTask = true;
             nbTurns = rand.nextInt(40);
             return;
         }
-        if(isDerriere(pos)){
+        if (isDerriere(pos)) {
             moveFrontTask = true;
             nbTurns = rand.nextInt(40);
             return;
         }
     }
-    private void moveBackTast(double pos){
-        if(isDerriere(pos)){
+
+    private void moveBackTast(double pos) {
+        if (isDerriere(pos)) {
             System.out.println("Je vais devant");
             moveFrontTask = true;
-        }else{
+        } else {
             System.out.println("Je vais derriere");
             moveBackTask = true;
         }
         nbTurns = rand.nextInt(40);
     }
+
     private void myMove() {
         isMoving = !isMoving;
-        if(isMoving)
+        if (isMoving)
             move();
-        else if(!doNotShoot)
+        else if (!doNotShoot)
             fire(getHeading());
     }
+
     private void attack(double enemyDirection) {
         isMoving = !isMoving;
-        if(isMoving){
-            if(isDerriere(enemyDirection))
+        if (isMoving) {
+            if (isDerriere(enemyDirection))
                 move();
             else
                 moveBack();
             return;
-        }
-        else if(!doNotShoot){
+        } else if (!doNotShoot) {
             fire(enemyDirection);
             return;
         }
-        if(Math.random() >= 0.5) {
+        if (Math.random() >= 0.5) {
             stepTurn(Parameters.Direction.LEFT);
-        }else{
+        } else {
             stepTurn(Parameters.Direction.RIGHT);
         }
     }
@@ -257,32 +272,36 @@ public class FighterBrain extends Brain {
     private boolean isSameDirection(double dir1, double dir2) {
         return Math.abs(dir1 - dir2) < ANGLEPRECISION;
     }
+
     private boolean isInFrontOfMe(Double enemy) {
         double heading = getHeading();
         double left = 0.15 * Math.PI;
         double right = -0.15 * Math.PI;
-        boolean res = enemy <= (heading + left) % (2*Math.PI) && enemy >= (heading + right) % (2*Math.PI);
+        boolean res = enemy <= (heading + left) % (2 * Math.PI) && enemy >= (heading + right) % (2 * Math.PI);
         return res;
     }
-    private boolean isDevant(double pos){
+
+    private boolean isDevant(double pos) {
         double heading = getHeading();
         double left = 0.5 * Math.PI;
-        System.out.println("POs = "+pos+" HEADING "+heading+" Left "+((heading + left) % (2*Math.PI))+" right "+((heading - left) % (2*Math.PI))+" res "+(pos <= (heading + left) % (2*Math.PI) && pos >= (heading - left) % (2*Math.PI)));
-        return pos <= (heading + left) % (2*Math.PI) && pos >= (heading - left) % (2*Math.PI);
+        System.out.println("POs = " + pos + " HEADING " + heading + " Left " + ((heading + left) % (2 * Math.PI)) + "" +
+                        " right " + ((heading - left) % (2 * Math.PI)) + " res " + (pos <= (heading + left) % (2 *
+                        Math.PI) && pos >= (heading - left) % (2 * Math.PI)));
+        return pos <= (heading + left) % (2 * Math.PI) && pos >= (heading - left) % (2 * Math.PI);
     }
 
-    private boolean isDerriere(double pos){
+    private boolean isDerriere(double pos) {
         return !isDevant(pos);
     }
 
-    private boolean isAGauche(double pos){
+    private boolean isAGauche(double pos) {
         double heading = getHeading();
-        double left =Math.PI;
-        System.out.println("POs = "+pos+" HEADING "+heading+" Right "+(heading)+" Left "+((heading - left))+" resultat = "+(pos <= heading && pos >= (heading - left)));
-        return pos <= heading % (2*Math.PI) && pos >= (heading - left) % (2*Math.PI);
+        double left = Math.PI;
+        System.out.println("POs = " + pos + " HEADING " + heading + " Right " + (heading) + " Left " + ((heading - left)) + " resultat = " + (pos <= heading && pos >= (heading - left)));
+        return pos <= heading % (2 * Math.PI) && pos >= (heading - left) % (2 * Math.PI);
     }
 
-    private boolean isADroite(double pos){
+    private boolean isADroite(double pos) {
         return !isAGauche(pos);
     }
 }

@@ -27,8 +27,7 @@ public class BrainDetectScout extends Brain {
 
     public void activate() {
 
-
-
+        mm.addScout(this);
         BrainDetectScoutMaster.getInstance().add(this);
         boolean haut = false;
         boolean bas = false;
@@ -86,6 +85,7 @@ public class BrainDetectScout extends Brain {
     }
 
     public void step() {
+
         mm.updateWarField();
 
         if (random() < 0.5) {
@@ -101,7 +101,11 @@ public class BrainDetectScout extends Brain {
             stepTurn(Direction.RIGHT);
             return;
         }
-
+        double newX = CoordHelper.polToCart(myPosition, getHeading(), moveSpeed).getX();
+        double newY = CoordHelper.polToCart(myPosition, getHeading(), moveSpeed).getY();
+        double objX;
+        double objY;
+        boolean bull = false;
         for (IRadarResult r : detectRadar()) {
             CartCoordinate position = null;
             double d = Double.MAX_VALUE;
@@ -111,13 +115,24 @@ public class BrainDetectScout extends Brain {
                 case TeamMainBot:
                 case TeamSecondaryBot:
                 case Wreck:
-                    d= r.getObjectDistance() ;
+                    d = r.getObjectDistance();
+                    break;
+                case BULLET:
+                    bull = true;
                     break;
             }
-                collision = d < 2.1 * Parameters.teamASecondaryBotRadius;
+            CartCoordinate botPos = CoordHelper
+                            .polToCart(myPosition, r.getObjectDirection(), r.getObjectDistance());
+            if (!bull)
+                if (!collision)
+                    collision = (newX - botPos.getX()) * (newX - botPos.getX()) + (newY - botPos
+                                    .getY()) * (newY - botPos
+                                    .getY()) < (Parameters.teamAMainBotRadius + 50) * (Parameters.teamAMainBotRadius
+                                    + 50);
+            //                collision = d < 2.1 * Parameters.teamASecondaryBotRadius;
         }
 
-        if (!collision) {
+        if (!collision && getHealth() > 0) {
             myPosition = CoordHelper.polToCart(myPosition, getHeading(), moveSpeed);
         }
         logPosition();
@@ -125,8 +140,7 @@ public class BrainDetectScout extends Brain {
 
     }
 
-
-    public ArrayList<IRadarResult> getReport(){
+    public ArrayList<IRadarResult> getReport() {
         return detectRadar();
     }
 
