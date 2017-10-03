@@ -10,8 +10,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
-import algorithms.BrainDetectScout;
-import algorithms.BrainDetectScoutMaster;
+import algorithms.*;
 import robotsimulator.Bot;
 import robotsimulator.Bullet;
 import robotsimulator.SimulatorEngine;
@@ -211,6 +210,9 @@ public class DisplayGame extends javax.swing.JPanel {
 
         g2d = ((Graphics2D) g.create());
 
+
+
+
         if(BrainDetectScoutMaster.getInstance().getSize() >0) {
             for (int j = 6; j < 10; j++) {
                 //TODO separate into multiple fori and make accessors available from Brains
@@ -338,6 +340,47 @@ public class DisplayGame extends javax.swing.JPanel {
             Circle c = new Circle(p, b.getRadius() * 3.0D, Color.RED);
             c.draw(g2d, xModifier, yModifier, zoomFactor, 20);
         }
+
+
+        Position[][] warField = MasterMind.getInstance().getWarField();
+
+        for (int x = 0; x < warField.length; x++) {
+            Position[] tmp = warField[x];
+            for (int y = 0; y < tmp.length; y++) {
+                double xx = (x - 50) * zoomFactor + xModifier;
+                double yy = (y - 50) * zoomFactor + yModifier;
+                Color col = null;
+                if (warField[x][y].getTypes() != null) {
+                    switch (warField[x][y].getTypes()) {
+
+                        case OpponentMainBot:
+                            col = Color.RED;
+                            break;
+                        case OpponentSecondaryBot:
+                            col = Color.PINK;
+                            break;
+                        case TeamMainBot:
+                            col = Color.BLUE;
+                            break;
+                        case TeamSecondaryBot:
+                            col = Color.CYAN;
+                            break;
+                        case Wreck:
+                            col = Color.black;
+                            break;
+                        case BULLET:
+                            col = Color.GREEN;
+                            break;
+                        default:
+                            col = Color.gray;
+                            break;
+                    }
+                    g2d.setColor(col);
+                    g2d.drawRect((int) Math.round(xx), (int) Math.round(yy), 1, 1);
+                }
+            }
+        }
+
     }
 
     protected void shiftLeftAll() {

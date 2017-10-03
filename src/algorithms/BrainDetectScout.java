@@ -7,26 +7,12 @@
 package algorithms;
 
 import static characteristics.Parameters.*;
-import static characteristics.Parameters.EAST;
-import static characteristics.Parameters.NORTH;
-import static characteristics.Parameters.SOUTH;
-import static characteristics.Parameters.WEST;
-import static characteristics.Parameters.teamASecondaryBotRadius;
-import static java.lang.Math.PI;
-import static java.lang.Math.abs;
 import static java.lang.Math.random;
-import static java.lang.Math.sin;
-import static java.text.MessageFormat.format;
 
-import java.awt.*;
-import java.text.MessageFormat;
-import java.util.*;
-
-import javax.print.attribute.standard.PageRanges;
-import javax.smartcardio.Card;
+import java.util.ArrayList;
 
 import characteristics.*;
-import robotsimulator.*;
+import robotsimulator.Brain;
 import tools.CartCoordinate;
 import tools.CoordHelper;
 
@@ -37,11 +23,12 @@ public class BrainDetectScout extends Brain {
     private CartCoordinate myPosition;
     private boolean teamGauche;
     private double moveSpeed = teamASecondaryBotSpeed;
+    MasterMind mm = MasterMind.getInstance();
 
     public void activate() {
 
 
-        Parameters.
+
         BrainDetectScoutMaster.getInstance().add(this);
         boolean haut = false;
         boolean bas = false;
@@ -99,6 +86,7 @@ public class BrainDetectScout extends Brain {
     }
 
     public void step() {
+        mm.updateWarField();
 
         if (random() < 0.5) {
             if (random() < 0.5) {
@@ -118,7 +106,6 @@ public class BrainDetectScout extends Brain {
             CartCoordinate position = null;
             double d = Double.MAX_VALUE;
             switch (r.getObjectType()) {
-
                 case OpponentMainBot:
                 case OpponentSecondaryBot:
                 case TeamMainBot:
@@ -127,9 +114,7 @@ public class BrainDetectScout extends Brain {
                     d= r.getObjectDistance() ;
                     break;
             }
-            if (!collision) {
                 collision = d < 2.1 * Parameters.teamASecondaryBotRadius;
-            }
         }
 
         if (!collision) {
@@ -138,6 +123,15 @@ public class BrainDetectScout extends Brain {
         logPosition();
         move();
 
+    }
+
+
+    public ArrayList<IRadarResult> getReport(){
+        return detectRadar();
+    }
+
+    public CartCoordinate getPos() {
+        return myPosition;
     }
 
     public String getName() {
