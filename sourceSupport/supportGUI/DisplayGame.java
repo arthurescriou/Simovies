@@ -218,7 +218,7 @@ public class DisplayGame extends javax.swing.JPanel {
                 double tempY = BrainDetectScoutMaster.getInstance().get(j - 6).getPosition().getY();
                 double x = (tempX - 50) * zoomFactor + xModifier;
                 double y = (tempY - 50) * zoomFactor + yModifier;
-                g2d.drawRect((int) Math.round(x), (int) Math.round(y), 40, 40);
+                g2d.drawRect((int) Math.round(x-20), (int) Math.round(y-20), 40, 40);
             }
         }
 
@@ -338,7 +338,6 @@ public class DisplayGame extends javax.swing.JPanel {
             c.draw(g2d, xModifier, yModifier, zoomFactor, 20);
         }
 
-        Position[][] warField = MasterMind.getInstance().getWarField();
 
         for (Position position : MasterMind.getInstance().getTarget()) {
 
@@ -370,7 +369,7 @@ public class DisplayGame extends javax.swing.JPanel {
                     break;
             }
             g2d.setColor(col);
-            g2d.drawRect((int) Math.round(xx), (int) Math.round(yy), 4, 4);
+            g2d.drawRect((int) Math.round(xx -3), (int) Math.round(yy-3), 6, 6);
 
         }
 

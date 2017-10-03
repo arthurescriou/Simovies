@@ -52,14 +52,14 @@ public class BrainDetectScout extends Brain {
             if (gauche) {
                 name = "schg";
                 teamGauche = true;
-                myPosition = new CartCoordinate(teamASecondaryBot1InitX, teamASecondaryBot1InitY);
+                myPosition = new CartCoordinate(teamASecondaryBot1InitX+50, teamASecondaryBot1InitY+50);
                 logPosition();
             }
 
             if (droite) {
                 name = "schd";
                 teamGauche = false;
-                myPosition = new CartCoordinate(teamBSecondaryBot1InitX, teamBSecondaryBot1InitY);
+                myPosition = new CartCoordinate(teamBSecondaryBot1InitX+50, teamBSecondaryBot1InitY+50);
                 logPosition();
             }
         }
@@ -67,13 +67,13 @@ public class BrainDetectScout extends Brain {
             if (gauche) {
                 name = "scbg";
                 teamGauche = true;
-                myPosition = new CartCoordinate(teamASecondaryBot2InitX, teamASecondaryBot2InitY);
+                myPosition = new CartCoordinate(teamASecondaryBot2InitX+50, teamASecondaryBot2InitY+50);
                 logPosition();
             }
             if (droite) {
                 name = "scbd";
                 teamGauche = false;
-                myPosition = new CartCoordinate(teamBSecondaryBot2InitX, teamBSecondaryBot2InitY);
+                myPosition = new CartCoordinate(teamBSecondaryBot2InitX+50, teamBSecondaryBot2InitY+50);
                 logPosition();
             }
         }
@@ -103,11 +103,8 @@ public class BrainDetectScout extends Brain {
         }
         double newX = CoordHelper.polToCart(myPosition, getHeading(), moveSpeed).getX();
         double newY = CoordHelper.polToCart(myPosition, getHeading(), moveSpeed).getY();
-        double objX;
-        double objY;
         boolean bull = false;
         for (IRadarResult r : detectRadar()) {
-            CartCoordinate position = null;
             double d = Double.MAX_VALUE;
             switch (r.getObjectType()) {
                 case OpponentMainBot:
@@ -115,7 +112,6 @@ public class BrainDetectScout extends Brain {
                 case TeamMainBot:
                 case TeamSecondaryBot:
                 case Wreck:
-                    d = r.getObjectDistance();
                     break;
                 case BULLET:
                     bull = true;
