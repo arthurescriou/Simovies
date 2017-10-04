@@ -3,7 +3,7 @@
  */
 package tools;
 
-import static java.lang.Math.*;
+import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.round;
 import static java.lang.Math.sin;
@@ -25,7 +25,10 @@ public class CoordHelper {
     }
 
     public static PolarCoordinate cartToPol(CartCoordinate orig, CartCoordinate to) {
-        return new PolarCoordinate(atan2(to.getY() - orig.getY(), to.getX() - orig.getX()), orig.distance(to));
+        double dx = to.getX() - orig.getX();
+        double dy = to.getY() - orig.getY();
+        double angle= atan2(dy,dx);
+        return new PolarCoordinate(angle,orig.distance(to));
     }
 
     public static CartCoordinate polToCart(CartCoordinate orig, PolarCoordinate polCo) {

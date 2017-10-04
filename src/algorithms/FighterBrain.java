@@ -3,11 +3,10 @@
  */
 package algorithms;
 
-import java.util.ArrayList;
 import java.util.Random;
 
-import characteristics.*;
-import robotsimulator.Brain;
+import characteristics.Parameters;
+import tools.*;
 
 public class FighterBrain extends BrainDetectTank {
 
@@ -18,6 +17,7 @@ public class FighterBrain extends BrainDetectTank {
     private static final int CARREFOUR = 0x5EC0;
     private static final int DARTY = 0x333;
     private static final int UNDEFINED = 0xBADC0DE;
+    private int CPT = 0;
 
     enum BOUSSOLE {DEVANT, DERRIERE, GAUCHE, DROITE}
 
@@ -43,7 +43,7 @@ public class FighterBrain extends BrainDetectTank {
         super.activate();
         // ODOMETRY CODE
         whoAmI = lol++;
-//        MasterMind.getInstance().addTanks(this);
+        //        MasterMind.getInstance().addTanks(this);
         // INIT
         moveFrontTask = false;
         moveBackTask = false;
@@ -55,135 +55,146 @@ public class FighterBrain extends BrainDetectTank {
 
     public void step() {
         super.step();
+        //        if(CPT <10){
+        //            stepTurn(Parameters.Direction.RIGHT);
+        //            CPT++;
+        //            return;
+        //        }
 
-        ArrayList<IRadarResult> radarResults;
-        if (getHealth() <= 0)
-            return;
-        if (whoAmI % 3 == 2) {
-            if (isSameDirection(getHeading(), Parameters.NORTH)) {
-                distTop++;
-            }
-            if (isSameDirection(getHeading(), Parameters.EAST))
-                distLateral++;
+        CartCoordinate targetAcquired = MasterMind.getInstance().fireForEffect();
+        if (targetAcquired != null) {
+            PolarCoordinate polar = CoordHelper.cartToPol(myPosition, targetAcquired);
+            fire(polar.getAngle());
         }
-        //AUTOMATON
-        /*** Permet de reculer lorsque trop rpes ***/
-        if (moveBackTask && nbTurns == 0) {
-            moveBackTask = false;
-            dodgeObstacle();
-        }
-        if (moveBackTask && nbTurns > 0) {
-            moveBack();
-            nbTurns--;
-            return;
-        }
-
-        /*** Permet de reculer lorsque trop rpes ***/
-        if (moveFrontTask && nbTurns == 0) {
-            moveFrontTask = false;
-        }
-        if (moveFrontTask && nbTurns > 0) {
-            move();
-            nbTurns--;
-            return;
-        }
-        /*** Permet au robot de se positioner vers son NORD ***/
-        if (dodgeTask && nbTurns == 0) {
-            dodgeTask = false;
-            dodgeLeftTask = false;
-            dodgeRightTask = false;
-        }
-        /***
-         * Tant que le robot n'est pas bien positionne on tourne a droite
-         * jusqu'a atteindre le NORD
-         ***/
-        if (dodgeTask && nbTurns > 0) {
-            if (dodgeLeftTask)
-                stepTurn(Parameters.Direction.LEFT);
-            else
-                stepTurn(Parameters.Direction.RIGHT);
-            nbTurns--;
-            return;
-        }
-
-        /***
-         * Si le robot n'est pas en mode tourner et qu'il detecte un wall alors
-         * tourne a gauche
-         ***/
-        if ((detectFront().getObjectType() == IFrontSensorResult.Types.WALL || detectFront()
-                        .getObjectType() == IFrontSensorResult.Types.Wreck)) {
-            for (IRadarResult r : detectRadar()) {
-                if (r.getObjectType() == IRadarResult.Types.Wreck && r.getObjectDistance() <= r
-                                .getObjectRadius() + Parameters.teamAMainBotRadius + 80) {
-                    dodgeObstacle(r.getObjectDirection(), r.getObjectDistance());
-                    return;
-                }
-            }
-            dodgeObstacle();
-            return;
-        }
-
-        if (!dodgeTask && !moveBackTask) {
-            radarResults = detectRadar();
-            int enemyFighters = 0, enemyPatrols = 0;
-            double enemyDirection = 0;
-            doNotShoot = false;
-            for (IRadarResult r : radarResults) {
-                /** Focus le Main **/
-                if (r.getObjectType() == IRadarResult.Types.OpponentMainBot) {
-                    enemyFighters++;
-                    enemyDirection = r.getObjectDirection();
-                }
-                /** Au cas ou il ya un secondary **/
-                if (r.getObjectType() == IRadarResult.Types.OpponentSecondaryBot) {
-                    if (enemyFighters == 0)
-                        enemyDirection = r.getObjectDirection();
-                    enemyPatrols++;
-                }
-                /** Ne pas tirer sur friends **/
-                if (r.getObjectType() == IRadarResult.Types.TeamMainBot
-                                || r.getObjectType() == IRadarResult.Types.TeamSecondaryBot) {
-                    if (isInFrontOfMe(r.getObjectDirection()) && enemyFighters + enemyPatrols == 0) {
-                        doNotShoot = true;
-                    }
-                    if (r.getObjectDistance() <= r.getObjectRadius() + Parameters.teamAMainBotRadius + 80) {
-                        dodgeObstacle(r.getObjectDirection(), r.getObjectDistance());
-                        return;
-                    }
-                }
-                /** Reculer si trop proche **/
-                if (r.getObjectType() == IRadarResult.Types.TeamMainBot || r
-                                .getObjectType() == IRadarResult.Types.TeamSecondaryBot || r
-                                .getObjectType() == IRadarResult.Types.Wreck) {
-                    if (r.getObjectDistance() <= r
-                                    .getObjectRadius() + Parameters.teamAMainBotRadius + 20 && !dodgeTask) {
-                        moveBackTast(r.getObjectDirection());
-                        return;
-                    }
-                }
-            }
-
-            /*** Comporte de base lorsque dennemi detecte ***/
-            if (enemyFighters + enemyPatrols > 0) {
-                attack(enemyDirection);
-                return;
-            }
-        }
-
-        /*** DEFAULT COMPORTEMENT ***/
-        double randDouble = Math.random();
-        if (randDouble <= 0.60) {
-            move();
-            return;
-        }
-        if (randDouble <= 0.80) {
-            stepTurn(Parameters.Direction.LEFT);
-            return;
-        }
-        if (randDouble <= 1.00) {
-            stepTurn(Parameters.Direction.RIGHT);
-            return;
-        }
+        return;
+        //        ArrayList<IRadarResult> radarResults;
+        //        if (getHealth() <= 0)
+        //            return;
+        //        if (whoAmI % 3 == 2) {
+        //            if (isSameDirection(getHeading(), Parameters.NORTH)) {
+        //                distTop++;
+        //            }
+        //            if (isSameDirection(getHeading(), Parameters.EAST))
+        //                distLateral++;
+        //        }
+        //        AUTOMATON
+        //        /*** Permet de reculer lorsque trop rpes ***/
+        //        if (moveBackTask && nbTurns == 0) {
+        //            moveBackTask = false;
+        //            dodgeObstacle();
+        //        }
+        //        if (moveBackTask && nbTurns > 0) {
+        //            moveBack();
+        //            nbTurns--;
+        //            return;
+        //        }
+        //
+        //        /*** Permet de reculer lorsque trop rpes ***/
+        //        if (moveFrontTask && nbTurns == 0) {
+        //            moveFrontTask = false;
+        //        }
+        //        if (moveFrontTask && nbTurns > 0) {
+        //            move();
+        //            nbTurns--;
+        //            return;
+        //        }
+        //        /*** Permet au robot de se positioner vers son NORD ***/
+        //        if (dodgeTask && nbTurns == 0) {
+        //            dodgeTask = false;
+        //            dodgeLeftTask = false;
+        //            dodgeRightTask = false;
+        //        }
+        //        /***
+        //         * Tant que le robot n'est pas bien positionne on tourne a droite
+        //         * jusqu'a atteindre le NORD
+        //         ***/
+        //        if (dodgeTask && nbTurns > 0) {
+        //            if (dodgeLeftTask)
+        //                stepTurn(Parameters.Direction.LEFT);
+        //            else
+        //                stepTurn(Parameters.Direction.RIGHT);
+        //            nbTurns--;
+        //            return;
+        //        }
+        //
+        //        /***
+        //         * Si le robot n'est pas en mode tourner et qu'il detecte un wall alors
+        //         * tourne a gauche
+        //         ***/
+        //        if ((detectFront().getObjectType() == IFrontSensorResult.Types.WALL || detectFront()
+        //                        .getObjectType() == IFrontSensorResult.Types.Wreck)) {
+        //            for (IRadarResult r : detectRadar()) {
+        //                if (r.getObjectType() == IRadarResult.Types.Wreck && r.getObjectDistance() <= r
+        //                                .getObjectRadius() + Parameters.teamAMainBotRadius + 80) {
+        //                    dodgeObstacle(r.getObjectDirection(), r.getObjectDistance());
+        //                    return;
+        //                }
+        //            }
+        //            dodgeObstacle();
+        //            return;
+        //        }
+        //
+        //        if (!dodgeTask && !moveBackTask) {
+        //            radarResults = detectRadar();
+        //            int enemyFighters = 0, enemyPatrols = 0;
+        //            double enemyDirection = 0;
+        //            doNotShoot = false;
+        //            for (IRadarResult r : radarResults) {
+        //                /** Focus le Main **/
+        //                if (r.getObjectType() == IRadarResult.Types.OpponentMainBot) {
+        //                    enemyFighters++;
+        //                    enemyDirection = r.getObjectDirection();
+        //                }
+        //                /** Au cas ou il ya un secondary **/
+        //                if (r.getObjectType() == IRadarResult.Types.OpponentSecondaryBot) {
+        //                    if (enemyFighters == 0)
+        //                        enemyDirection = r.getObjectDirection();
+        //                    enemyPatrols++;
+        //                }
+        //                /** Ne pas tirer sur friends **/
+        //                if (r.getObjectType() == IRadarResult.Types.TeamMainBot
+        //                                || r.getObjectType() == IRadarResult.Types.TeamSecondaryBot) {
+        //                    if (isInFrontOfMe(r.getObjectDirection()) && enemyFighters + enemyPatrols == 0) {
+        //                        doNotShoot = true;
+        //                    }
+        //                    if (r.getObjectDistance() <= r.getObjectRadius() + Parameters.teamAMainBotRadius + 80) {
+        //                        dodgeObstacle(r.getObjectDirection(), r.getObjectDistance());
+        //                        return;
+        //                    }
+        //                }
+        //                /** Reculer si trop proche **/
+        //                if (r.getObjectType() == IRadarResult.Types.TeamMainBot || r
+        //                                .getObjectType() == IRadarResult.Types.TeamSecondaryBot || r
+        //                                .getObjectType() == IRadarResult.Types.Wreck) {
+        //                    if (r.getObjectDistance() <= r
+        //                                    .getObjectRadius() + Parameters.teamAMainBotRadius + 20 && !dodgeTask) {
+        //                        moveBackTast(r.getObjectDirection());
+        //                        return;
+        //                    }
+        //                }
+        //            }
+        //
+        //            /*** Comporte de base lorsque dennemi detecte ***/
+        //            if (enemyFighters + enemyPatrols > 0) {
+        //                attack(enemyDirection);
+        //                return;
+        //            }
+        //        }
+        //
+        //        /*** DEFAULT COMPORTEMENT ***/
+        //        double randDouble = Math.random();
+        //        if (randDouble <= 0.60) {
+        //            move();
+        //            return;
+        //        }
+        //        if (randDouble <= 0.80) {
+        //            stepTurn(Parameters.Direction.LEFT);
+        //            return;
+        //        }
+        //        if (randDouble <= 1.00) {
+        //            stepTurn(Parameters.Direction.RIGHT);
+        //            return;
+        //        }
     }
 
     private void dodgeObstacle() {
@@ -285,7 +296,7 @@ public class FighterBrain extends BrainDetectTank {
     private boolean isAGauche(double pos) {
         double heading = getHeading();
         double left = Math.PI;
-         return pos <= heading % (2 * Math.PI) && pos >= (heading - left) % (2 * Math.PI);
+        return pos <= heading % (2 * Math.PI) && pos >= (heading - left) % (2 * Math.PI);
     }
 
     private boolean isADroite(double pos) {

@@ -1,10 +1,8 @@
 package robotsimulator;
 
-import characteristics.IRadarResult;
-
 import java.util.ArrayList;
 
-import playground.PlayingArea;
+import characteristics.IRadarResult;
 
 public class Bot {
 
@@ -84,8 +82,6 @@ public class Bot {
     protected void move() {
         double newX = x + speed * Math.cos(angle);
         double newY = y + speed * Math.sin(angle);
-        System.out.println("width: "+(engine.getWorld().getWidth()));
-        System.out.println(("height: "+engine.getWorld().getHeight()));
         if ((newX >= radius) && (newX <= engine.getWorld().getWidth() - radius) && (newY >= radius) && (newY <= engine
                         .getWorld().getHeight() - radius)) {
             boolean doIt = true;

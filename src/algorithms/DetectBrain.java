@@ -8,15 +8,20 @@ import static tools.CoordHelper.polToCart;
 
 import java.util.ArrayList;
 
-import characteristics.*;
+import characteristics.IRadarResult;
+import characteristics.Parameters;
 import robotsimulator.Brain;
 import tools.CartCoordinate;
 
 public abstract class DetectBrain extends Brain {
 
     protected CartCoordinate myPosition;
-    protected String name;
+    protected WhoAmI name;
     protected double moveSpeed;
+
+    public WhoAmI getName() {
+        return name;
+    }
 
     public abstract CartCoordinate getPos();
 
@@ -26,7 +31,7 @@ public abstract class DetectBrain extends Brain {
         sendLogMessage(name + " x:" + myPosition.getX() + " y:" + myPosition.getY());
     }
 
-    private void move(boolean back) {
+    public void move(boolean back) {
         double speed = back ? -moveSpeed : moveSpeed;
         boolean collision = false;
         CartCoordinate newCartCoordinate = polToCart(myPosition, getHeading(), speed);
@@ -58,8 +63,6 @@ public abstract class DetectBrain extends Brain {
             if (!collision && getHealth() > 0) {
                 myPosition = newCartCoordinate;
             }
-        }else{
-            System.out.println(newCartCoordinate);
         }
 
             logPosition();
@@ -68,6 +71,11 @@ public abstract class DetectBrain extends Brain {
         else
             super.move();
 
+    }
+
+    @Override
+    public void step() {
+        MasterMind.getInstance().step(this);
     }
 
     @Override
