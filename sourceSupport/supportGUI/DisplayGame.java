@@ -1,5 +1,8 @@
 package supportGUI;
 
+import static characteristics.Parameters.teamAMainBot1InitX;
+import static characteristics.Parameters.teamAMainBot1InitY;
+
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.geom.AffineTransform;
@@ -11,6 +14,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 import algorithms.*;
+import characteristics.Parameters;
 import robotsimulator.Bot;
 import robotsimulator.Bullet;
 import robotsimulator.SimulatorEngine;
@@ -119,7 +123,8 @@ public class DisplayGame extends javax.swing.JPanel {
         zoomFactor = Math.min(0.95D * width / engine.getWorldWidth(), 0.95D * height / engine.getWorldHeight());
         xModifier = ((int) (0.5D * (width - zoomFactor * engine.getWorldWidth())));
         yModifier = ((int) (0.5D * (height - zoomFactor * engine.getWorldHeight())));
-
+        System.out.println(xModifier);
+        System.out.println(yModifier);
         resetImageSize();
 
         repaint();
@@ -209,6 +214,7 @@ public class DisplayGame extends javax.swing.JPanel {
         super.paintComponent(g);
 
         g2d = ((Graphics2D) g.create());
+
 
         if (BrainDetectScoutMaster.getInstance().getSize() > 0) {
             for (int j = 6; j < 10; j++) {
@@ -339,7 +345,6 @@ public class DisplayGame extends javax.swing.JPanel {
         }
 
         for (Position position : MasterMind.getInstance().getTarget()) {
-            System.out.println(position);
             double xx = (position.getX() - 50) * zoomFactor + xModifier;
             double yy = (position.getY() - 50) * zoomFactor + yModifier;
             Color col = null;
@@ -372,6 +377,8 @@ public class DisplayGame extends javax.swing.JPanel {
 
         }
 
+        g2d.setColor(Color.BLUE);
+        g2d.drawRect((int)teamAMainBot1InitX+50, (int)teamAMainBot1InitY+50,20,20);
     }
 
     protected void shiftLeftAll() {

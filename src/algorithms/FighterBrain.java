@@ -55,6 +55,7 @@ public class FighterBrain extends BrainDetectTank {
 
     public void step() {
         super.step();
+
         ArrayList<IRadarResult> radarResults;
         if (getHealth() <= 0)
             return;

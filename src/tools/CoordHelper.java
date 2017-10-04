@@ -47,6 +47,6 @@ public class CoordHelper {
     }
 
     public static boolean isOutOfBound(CartCoordinate coord){
-        return (coord.getX() < 0 || coord.getX() > 3000 || coord.getY() < 0 || coord.getY() > 2000);
+        return (coord.getX() <= 100.0 || coord.getX() >= 3000.0 || coord.getY() <= 100.0 || coord.getY() >= 2000.0);
     }
 }

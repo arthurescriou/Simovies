@@ -14,8 +14,10 @@ import characteristics.IFrontSensorResult;
 import characteristics.IRadarResult;
 
 public class HighwayFugitive extends BrainDetectScout {
+
   //---PARAMETERS---//
   private static final double HEADINGPRECISION = 0.001;
+  private int CPT = 0;
 
   //---VARIABLES---//
   private boolean turnTask,turnRight,moveTask,highway,back;
@@ -46,6 +48,10 @@ public class HighwayFugitive extends BrainDetectScout {
       fire(Math.random()*Math.PI*2);
       return;
     }
+
+
+
+
     ArrayList<IRadarResult> radarResults = detectRadar();
     if (highway) {
       if (endTaskCounter<0) {
@@ -140,6 +146,7 @@ public class HighwayFugitive extends BrainDetectScout {
     }
     return;
   }
+
   private boolean isHeading(double dir){
     return Math.abs(Math.sin(getHeading()-dir))<Parameters.teamAMainBotStepTurnAngle;
   }

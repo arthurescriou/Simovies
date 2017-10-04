@@ -29,10 +29,6 @@ public abstract class DetectBrain extends Brain {
     private void move(boolean back) {
         double speed = back ? -moveSpeed : moveSpeed;
         boolean collision = false;
-        if (detectFront().getObjectType() == IFrontSensorResult.Types.WALL) {
-            stepTurn(Parameters.Direction.RIGHT);
-            return;
-        }
         CartCoordinate newCartCoordinate = polToCart(myPosition, getHeading(), speed);
         boolean bull = false;
         for (IRadarResult r : detectRadar()) {
@@ -62,6 +58,8 @@ public abstract class DetectBrain extends Brain {
             if (!collision && getHealth() > 0) {
                 myPosition = newCartCoordinate;
             }
+        }else{
+            System.out.println(newCartCoordinate);
         }
 
             logPosition();

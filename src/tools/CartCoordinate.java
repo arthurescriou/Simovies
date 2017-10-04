@@ -37,4 +37,12 @@ public class CartCoordinate {
     }
 
     public double dotProduct(CartCoordinate q) { return this.x * q.getX() + this.y * q.getY(); }
+
+    @Override
+    public String toString() {
+        return "CartCoordinate{" +
+                        "x=" + x +
+                        ", y=" + y +
+                        '}';
+    }
 }
