@@ -3,14 +3,13 @@
  */
 package tools;
 
-import static java.lang.Math.*;
-
 public class PolarCoordinate {
+
     private double angle;
     private double dist;
 
     public PolarCoordinate(double angle, double dist) {
-        this.angle = angle % 2* PI - PI;
+        this.angle = angle;
         if (dist < 0) {
             throw new RuntimeException();
         }
@@ -31,5 +30,13 @@ public class PolarCoordinate {
 
     public void setDist(double dist) {
         this.dist = dist;
+    }
+
+    @Override
+    public String toString() {
+        return "PolarCoordinate{" +
+                        "angle=" + angle +
+                        ", dist=" + dist +
+                        '}';
     }
 }

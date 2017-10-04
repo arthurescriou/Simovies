@@ -1,23 +1,17 @@
 package supportGUI;
 
-import static characteristics.Parameters.teamAMainBot1InitX;
-import static characteristics.Parameters.teamAMainBot1InitY;
-
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 import algorithms.*;
-import characteristics.Parameters;
-import robotsimulator.Bot;
-import robotsimulator.Bullet;
-import robotsimulator.SimulatorEngine;
+import robotsimulator.*;
+import tools.CartCoordinate;
 
 public class DisplayGame extends javax.swing.JPanel {
 
@@ -123,8 +117,6 @@ public class DisplayGame extends javax.swing.JPanel {
         zoomFactor = Math.min(0.95D * width / engine.getWorldWidth(), 0.95D * height / engine.getWorldHeight());
         xModifier = ((int) (0.5D * (width - zoomFactor * engine.getWorldWidth())));
         yModifier = ((int) (0.5D * (height - zoomFactor * engine.getWorldHeight())));
-        System.out.println(xModifier);
-        System.out.println(yModifier);
         resetImageSize();
 
         repaint();
@@ -216,15 +208,27 @@ public class DisplayGame extends javax.swing.JPanel {
         g2d = ((Graphics2D) g.create());
 
 
-        if (BrainDetectScoutMaster.getInstance().getSize() > 0) {
-            for (int j = 6; j < 10; j++) {
+        if (DetectBrainAffichage.getInstance().getSize() > 0) {
+            for (int j = 0; j < 2; j++) {
                 //TODO separate into multiple fori and make accessors available from Brains
 
-                double tempX = BrainDetectScoutMaster.getInstance().get(j - 6).getPosition().getX();
-                double tempY = BrainDetectScoutMaster.getInstance().get(j - 6).getPosition().getY();
-                double x = (tempX - 50) * zoomFactor + xModifier;
-                double y = (tempY - 50) * zoomFactor + yModifier;
-                g2d.drawRect((int) Math.round(x-20), (int) Math.round(y-20), 40, 40);
+                double tempX = DetectBrainAffichage.getInstance().getScout(j).getPos().getX()-50;
+                double tempY = DetectBrainAffichage.getInstance().getScout(j).getPos().getY()-50;
+
+                Circle c = new Circle(new CartCoordinate((int)Math.round(tempX),(int)Math.round(tempY)), 500, Color.BLACK);
+                c.draw(g2d, xModifier, yModifier, zoomFactor, 1);
+            }
+        }
+
+        if (DetectBrainAffichage.getInstance().getSize() > 0) {
+            for (int j = 0; j < 3; j++) {
+                //TODO separate into multiple fori and make accessors available from Brains
+
+                double tempX = DetectBrainAffichage.getInstance().getTank(j).getPos().getX()-50;
+                double tempY = DetectBrainAffichage.getInstance().getTank(j).getPos().getY()-50;
+
+                Circle c = new Circle(new CartCoordinate((int)Math.round(tempX),(int)Math.round(tempY)), 200, Color.BLACK);
+                c.draw(g2d, xModifier, yModifier, zoomFactor, 1);
             }
         }
 
@@ -332,19 +336,19 @@ public class DisplayGame extends javax.swing.JPanel {
             }
         }
 
-        Point p = new Point();
+        CartCoordinate p = null;
         for (Bullet b : engine.getCurrentBullets()) {
-            p.setLocation(b.getX(), b.getY());
+            p=new CartCoordinate(b.getX(), b.getY());
             Circle c = new Circle(p, b.getRadius(), Color.BLACK);
             c.draw(g2d, xModifier, yModifier, zoomFactor);
         }
         for (Bullet b : engine.getCurrentExplosions()) {
-            p.setLocation(b.getX(), b.getY());
+            p=new CartCoordinate(b.getX(), b.getY());
             Circle c = new Circle(p, b.getRadius() * 3.0D, Color.RED);
             c.draw(g2d, xModifier, yModifier, zoomFactor, 20);
         }
 
-        for (Position position : MasterMind.getInstance().getTarget()) {
+        for (Position position : MasterMind.getInstance().getTargets()) {
             double xx = (position.getX() - 50) * zoomFactor + xModifier;
             double yy = (position.getY() - 50) * zoomFactor + yModifier;
             Color col = null;
@@ -376,9 +380,11 @@ public class DisplayGame extends javax.swing.JPanel {
             g2d.drawRect((int) Math.round(xx -3), (int) Math.round(yy-3), 6, 6);
 
         }
+        g2d.setColor(Color.black);
+        double xx = (2550 - 50) * zoomFactor + xModifier;
+        double yy = (850 - 50) * zoomFactor + yModifier;
+        g2d.drawRect((int) Math.round(xx -5), (int) Math.round(yy-5), 10, 10);
 
-        g2d.setColor(Color.BLUE);
-        g2d.drawRect((int)teamAMainBot1InitX+50, (int)teamAMainBot1InitY+50,20,20);
     }
 
     protected void shiftLeftAll() {

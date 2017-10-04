@@ -6,26 +6,20 @@
  * ******************************************************/
 package algorithms;
 
-import static characteristics.IRadarResult.Types.BULLET;
-import static characteristics.IRadarResult.Types.OpponentMainBot;
+import static algorithms.WhoAmI.TANK_1;
+import static algorithms.WhoAmI.TANK_2;
+import static algorithms.WhoAmI.TANK_3;
 import static characteristics.Parameters.*;
-import static java.lang.Math.abs;
-import static java.lang.Math.random;
-import static java.lang.Math.sin;
-import static tools.CoordHelper.*;
 
-import java.util.*;
+import java.util.ArrayList;
 
-import characteristics.*;
-import robotsimulator.*;
+import characteristics.IRadarResult;
+import characteristics.Parameters;
 import tools.CartCoordinate;
-import tools.CoordHelper;
 
 public abstract class BrainDetectTank extends DetectBrain {
     private boolean first = false;
 
-    private static List<IRadarResult.Types> BOTS_ENNEMY = Arrays
-                    .asList(IRadarResult.Types.OpponentMainBot, IRadarResult.Types.OpponentSecondaryBot);
 
     public void activate() {
         moveSpeed = teamAMainBotSpeed;
@@ -34,8 +28,9 @@ public abstract class BrainDetectTank extends DetectBrain {
         int enDessous = 0;
         boolean gauche = false;
         boolean droite = false;
-        MasterMind.getInstance().addTanks(this);
 
+        MasterMind.getInstance().addTanks(this);
+        DetectBrainAffichage.getInstance().add(this);
         if (getHeading() == WEST)
             droite = true;
         if (getHeading() == EAST)
@@ -51,31 +46,31 @@ public abstract class BrainDetectTank extends DetectBrain {
         if (auDessus == 0) {
             first = true;
             if (gauche) {
-                name = "thg";
+                name = TANK_1;
                 myPosition = new CartCoordinate(Parameters.teamAMainBot1InitX + 50, Parameters.teamAMainBot1InitY + 50);
             }
             if (droite) {
-                name = "thd";
+                name = TANK_1;
                 myPosition = new CartCoordinate(Parameters.teamBMainBot1InitX + 50, Parameters.teamBMainBot1InitY + 50);
             }
         }
         if (auDessus == 1 && enDessous == 1) {
             if (gauche) {
-                name = "tmg";
+                name = TANK_2;
                 myPosition = new CartCoordinate(Parameters.teamAMainBot2InitX + 50, Parameters.teamAMainBot2InitY + 50);
             }
             if (droite) {
-                name = "tmd";
+                name = TANK_2;
                 myPosition = new CartCoordinate(Parameters.teamBMainBot2InitX + 50, Parameters.teamBMainBot2InitY + 50);
             }
         }
         if (enDessous == 0) {
             if (gauche) {
-                name = "tbg";
+                name = TANK_3;
                 myPosition = new CartCoordinate(Parameters.teamAMainBot3InitX + 50, Parameters.teamAMainBot3InitY + 50);
             }
             if (droite) {
-                name = "tbd";
+                name = TANK_3;
                 myPosition = new CartCoordinate(Parameters.teamBMainBot3InitX + 50, Parameters.teamBMainBot3InitY + 50);
             }
         }

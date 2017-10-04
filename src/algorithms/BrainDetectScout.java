@@ -6,11 +6,13 @@
  * ******************************************************/
 package algorithms;
 
+import static algorithms.WhoAmI.SCOUT_1;
+import static algorithms.WhoAmI.SCOUT_2;
 import static characteristics.Parameters.*;
 
 import java.util.ArrayList;
 
-import characteristics.*;
+import characteristics.IRadarResult;
 import tools.CartCoordinate;
 
 public abstract class BrainDetectScout extends DetectBrain {
@@ -23,7 +25,7 @@ public abstract class BrainDetectScout extends DetectBrain {
 
         moveSpeed = teamASecondaryBotSpeed;
         mm.addScout(this);
-        BrainDetectScoutMaster.getInstance().add(this);
+        DetectBrainAffichage.getInstance().add(this);
         boolean haut = false;
         boolean bas = false;
         boolean gauche = false;
@@ -45,14 +47,14 @@ public abstract class BrainDetectScout extends DetectBrain {
 
         if (haut) {
             if (gauche) {
-                name = "schg";
+                name = SCOUT_1;
                 teamGauche = true;
                 myPosition = new CartCoordinate(teamASecondaryBot1InitX+50, teamASecondaryBot1InitY+50);
                 logPosition();
             }
 
             if (droite) {
-                name = "schd";
+                name = SCOUT_1;
                 teamGauche = false;
                 myPosition = new CartCoordinate(teamBSecondaryBot1InitX+50, teamBSecondaryBot1InitY+50);
                 logPosition();
@@ -60,13 +62,13 @@ public abstract class BrainDetectScout extends DetectBrain {
         }
         if (bas) {
             if (gauche) {
-                name = "scbg";
+                name = SCOUT_2;
                 teamGauche = true;
                 myPosition = new CartCoordinate(teamASecondaryBot2InitX+50, teamASecondaryBot2InitY+50);
                 logPosition();
             }
             if (droite) {
-                name = "scbd";
+                name = SCOUT_2;
                 teamGauche = false;
                 myPosition = new CartCoordinate(teamBSecondaryBot2InitX+50, teamBSecondaryBot2InitY+50);
                 logPosition();
@@ -87,7 +89,7 @@ public abstract class BrainDetectScout extends DetectBrain {
         return myPosition;
     }
 
-    public String getName() {
+    public WhoAmI getName() {
         return name;
     }
 
