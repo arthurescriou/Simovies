@@ -5,7 +5,6 @@ package algorithms;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
-import static java.lang.Math.cos;
 
 import characteristics.Parameters;
 import robotsimulator.Brain;
@@ -19,8 +18,9 @@ public class BrainBlond extends Brain {
 
     @Override
     public void step() {
-        if (!isLeCul(17 * PI / 18)) {
-            stepTurn(Parameters.Direction.RIGHT);
+        double direction = 7 * PI / 18;
+        if (!isLeCul(direction)) {
+            stepTurn(leftOrRight(direction));
         }
         System.out.println("dir: " + leftOrRight(4 * PI / 6));
         System.out.println(getHeading() % (2 * PI));
@@ -29,12 +29,10 @@ public class BrainBlond extends Brain {
     }
 
     private boolean isHeading(double dir) {
-//        double head = getHeading() % (2 * PI);
-//        double dirdir = dir % (2 * PI);
-//
-//        return abs(head-dirdir) < Parameters.teamBSecondaryBotStepTurnAngle;
+        double head = getHeading() % (2 * PI);
+        double dirdir = dir % (2 * PI);
 
-        return Math.abs(Math.sin(getHeading() - dir)) < Parameters.teamAMainBotStepTurnAngle && cos(getHeading()) < 0 ;
+        return abs(head-dirdir) < Parameters.teamBSecondaryBotStepTurnAngle;
     }
 
     private boolean isLeCul(double dir) {
@@ -52,6 +50,6 @@ public class BrainBlond extends Brain {
         if (abs(diff) < abs(assDiff))
             return diff < 0 ? Parameters.Direction.LEFT : Parameters.Direction.RIGHT;
         else
-            return assDiff < 0 ? Parameters.Direction.RIGHT : Parameters.Direction.LEFT;
+            return assDiff < 0 ? Parameters.Direction.LEFT : Parameters.Direction.RIGHT;
     }
 }
