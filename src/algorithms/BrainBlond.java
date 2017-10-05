@@ -22,8 +22,8 @@ public class BrainBlond extends Brain {
         if (!isLeCul(direction)) {
             stepTurn(leftOrRight(direction));
         }
-        System.out.println("dir: " + leftOrRight(4 * PI / 6));
-        System.out.println(getHeading() % (2 * PI));
+//        System.out.println("dir: " + leftOrRight(4 * PI / 6));
+//        System.out.println(getHeading() % (2 * PI));
         //        System.out.println(("bottom: " + isLeCul(PI)));
 
     }

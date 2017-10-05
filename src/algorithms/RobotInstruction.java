@@ -3,8 +3,11 @@
  */
 package algorithms;
 
+import static algorithms.Orders.CHILL;
 import static algorithms.Orders.MOVE;
 import static algorithms.Orders.MOVEBACK;
+import static algorithms.Orders.TURNLEFT;
+import static algorithms.Orders.TURNRIGHT;
 import static characteristics.Parameters.Direction;
 import static characteristics.Parameters.Direction.LEFT;
 import static characteristics.Parameters.Direction.RIGHT;
@@ -20,13 +23,14 @@ public class RobotInstruction {
 
     private PolarCoordinate polarBear;
     private CartCoordinate objective;
-    private Orders currentOrder;
+    private Orders currentOrder = CHILL;
     private static final double delta = 0.1;
 
     private DetectBrain myBot;
 
     public RobotInstruction(DetectBrain myBot) {
         this.myBot = myBot;
+        setObjective(myBot.getPos());
     }
 
     public PolarCoordinate getPolarBear() {
@@ -45,34 +49,41 @@ public class RobotInstruction {
         return myBot.getPos();
     }
 
-    private double getHeading(){
+    private double getHeading() {
         return myBot.getHeading();
     }
 
     public void setObjective(CartCoordinate objective) {
         this.objective = objective;
-        polarBear = cartToPol(getPosRobot(), objective);
-        if (isHeading(polarBear.getAngle()))
-            currentOrder = MOVE;
-        else if (isLeCul(polarBear.getAngle()))
-            currentOrder = MOVEBACK;
-            else if (true){}
+        majObj();
+    }
 
+    public void majObj() {
+        polarBear = cartToPol(getPosRobot(), objective);
+        if (polarBear.getDist() > 2) {
+            if (isHeading(polarBear.getAngle()))
+                currentOrder = MOVE;
+            else if (isLeCul(polarBear.getAngle()))
+                currentOrder = MOVEBACK;
+            else
+                currentOrder = leftOrRight(polarBear.getAngle());
+        } else
+            currentOrder = CHILL;
 
     }
 
     private boolean isHeading(double dir) {
-        double head = getHeading() % (2 * PI);
+        double head = -abs(getHeading() % (2 * PI));
         double dirdir = dir % (2 * PI);
 
-        return abs(head-dirdir) < teamBSecondaryBotStepTurnAngle;
+        return abs(head - dirdir) < teamBSecondaryBotStepTurnAngle * 5;
     }
 
     private boolean isLeCul(double dir) {
         return isHeading(dir + PI);
     }
 
-    private Direction leftOrRight(double dir) {
+    private Orders leftOrRight(double dir) {
         double head = getHeading() % (2 * PI);
         double ass = (getHeading() + PI) % (2 * PI);
         double whereTo = dir % (2 * PI);
@@ -81,8 +92,8 @@ public class RobotInstruction {
         double assDiff = whereTo - ass;
 
         if (abs(diff) < abs(assDiff))
-            return diff < 0 ? LEFT : RIGHT;
+            return diff > 0 ? TURNLEFT : TURNRIGHT;
         else
-            return assDiff < 0 ? LEFT : RIGHT;
+            return assDiff < 0 ? TURNLEFT : TURNRIGHT;
     }
 }

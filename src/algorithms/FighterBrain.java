@@ -60,7 +60,7 @@ public class FighterBrain extends BrainDetectTank {
         //            CPT++;
         //            return;
         //        }
-
+        logPosition();
         CartCoordinate targetAcquired = MasterMind.getInstance().fireForEffect();
         if (targetAcquired != null) {
             PolarCoordinate polar = CoordHelper.cartToPol(myPosition, targetAcquired);

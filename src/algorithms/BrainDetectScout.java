@@ -24,7 +24,6 @@ public abstract class BrainDetectScout extends DetectBrain {
     public void activate() {
 
         moveSpeed = teamASecondaryBotSpeed;
-        mm.addScout(this);
         DetectBrainAffichage.getInstance().add(this);
         boolean haut = false;
         boolean bas = false;
@@ -75,6 +74,7 @@ public abstract class BrainDetectScout extends DetectBrain {
             }
         }
 
+        mm.addScout(this);
     }
 
     public CartCoordinate getPosition() {

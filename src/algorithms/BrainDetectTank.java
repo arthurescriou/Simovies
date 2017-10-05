@@ -18,8 +18,8 @@ import characteristics.Parameters;
 import tools.CartCoordinate;
 
 public abstract class BrainDetectTank extends DetectBrain {
-    private boolean first = false;
 
+    private boolean first = false;
 
     public void activate() {
         moveSpeed = teamAMainBotSpeed;
@@ -29,7 +29,6 @@ public abstract class BrainDetectTank extends DetectBrain {
         boolean gauche = false;
         boolean droite = false;
 
-        MasterMind.getInstance().addTanks(this);
         DetectBrainAffichage.getInstance().add(this);
         if (getHeading() == WEST)
             droite = true;
@@ -74,7 +73,7 @@ public abstract class BrainDetectTank extends DetectBrain {
                 myPosition = new CartCoordinate(Parameters.teamBMainBot3InitX + 50, Parameters.teamBMainBot3InitY + 50);
             }
         }
-
+        MasterMind.getInstance().addTanks(this);
     }
 
     @Override
@@ -92,7 +91,5 @@ public abstract class BrainDetectTank extends DetectBrain {
     public ArrayList<IRadarResult> getReport() {
         return detectRadar();
     }
-
-
 
 }
