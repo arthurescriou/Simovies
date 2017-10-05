@@ -4,8 +4,10 @@
 package algorithms;
 
 public enum Orders {
-    TURN,
+    TURNRIGHT,
+    TURNLEFT,
     MOVE,
+    MOVEBACK,
     FIRE,
     CHILL
 }

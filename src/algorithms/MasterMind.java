@@ -32,6 +32,8 @@ public class MasterMind {
     private Pair<Orders, Double> curOrderTank2 ;
     private Pair<Orders, Double> curOrderTank3 ;
 
+
+
     private MasterMind() {
     }
 
@@ -146,18 +148,24 @@ public class MasterMind {
            return;
 
         switch (slaveOrders.getKey()) {
-            case TURN:
-                slave.stepTurn((slaveOrders.getValue() < 0) ? LEFT : RIGHT);
+            case TURNRIGHT:
+                slave.stepTurn(RIGHT);
+                break;
+            case TURNLEFT:
+                slave.stepTurn(LEFT);
                 break;
             case MOVE:
-                slave.move(slaveOrders.getValue() > 0);
+                slave.move();
+                break;
+            case MOVEBACK:
+                slave.moveBack();
                 break;
             case FIRE:
-                slave.fire(slaveOrders.getValue());
-                break;
+            slave.fire(slaveOrders.getValue());
+            break;
             case CHILL:
-                slave.sendLogMessage("cold one with the boys");
-                break;
+            slave.sendLogMessage("cold one with the boys");
+            break;
             default:
                 slave.sendLogMessage("What the fuck ?");
         }
