@@ -65,7 +65,7 @@ public abstract class DetectBrain extends Brain {
             }
         }
 
-            logPosition();
+//            logPosition();
         if (back)
             super.moveBack();
         else

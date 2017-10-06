@@ -3,17 +3,11 @@
  */
 package algorithms;
 
-import static algorithms.Orders.CHILL;
-import static algorithms.Orders.MOVE;
-import static algorithms.Orders.MOVEBACK;
-import static algorithms.Orders.TURNLEFT;
-import static algorithms.Orders.TURNRIGHT;
-import static characteristics.Parameters.Direction;
-import static characteristics.Parameters.Direction.LEFT;
-import static characteristics.Parameters.Direction.RIGHT;
+import static algorithms.Orders.*;
 import static characteristics.Parameters.teamBSecondaryBotStepTurnAngle;
-import static java.lang.Math.PI;
 import static java.lang.Math.abs;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 import static tools.CoordHelper.cartToPol;
 
 import tools.CartCoordinate;
@@ -72,28 +66,58 @@ public class RobotInstruction {
 
     }
 
-    private boolean isHeading(double dir) {
-        double head = -abs(getHeading() % (2 * PI));
-        double dirdir = dir % (2 * PI);
+    public boolean isHeading(double dir) {
+        double cosDir = cos(dir);
+        double sinDir = sin(dir);
+        double cosBot = cos(getHeading());
+        double sinBot = sin(getHeading());
 
-        return abs(head - dirdir) < teamBSecondaryBotStepTurnAngle * 5;
+        return abs(cosDir - cosBot) < cos(teamBSecondaryBotStepTurnAngle) && abs(sinDir - sinBot) <
+                        sin(teamBSecondaryBotStepTurnAngle);
     }
 
-    private boolean isLeCul(double dir) {
-        return isHeading(dir + PI);
+    public boolean isHeading(){
+        return isHeading(polarBear.getAngle());
+    }
+
+    public boolean isLeCul(double dir) {
+        double cosDir = cos(dir);
+        double sinDir = sin(dir);
+        double cosBot = - cos(getHeading());
+        double sinBot = - sin(getHeading());
+
+        return abs(cosDir - cosBot) < cos(teamBSecondaryBotStepTurnAngle) && abs(sinDir - sinBot) <
+                        sin(teamBSecondaryBotStepTurnAngle);
+    }
+
+    public boolean isLeCul() {
+        return isLeCul(polarBear.getAngle());
     }
 
     private Orders leftOrRight(double dir) {
-        double head = getHeading() % (2 * PI);
-        double ass = (getHeading() + PI) % (2 * PI);
-        double whereTo = dir % (2 * PI);
+        double cos = cos(getHeading()+dir);
+        double sin = sin(getHeading()+dir);
+        if(cos>0) {
+            if (sin > 0)
+                return TURNRIGHT;
+            else
+                return TURNLEFT;
+        }else
+            if(sin<0)
+                return TURNLEFT;
+            else return TURNRIGHT;
 
-        double diff = whereTo - head;
-        double assDiff = whereTo - ass;
-
-        if (abs(diff) < abs(assDiff))
-            return diff > 0 ? TURNLEFT : TURNRIGHT;
-        else
-            return assDiff < 0 ? TURNLEFT : TURNRIGHT;
     }
+//        double head = acos(cos(getHeading()));
+//        double ass = -abs((getHeading() + PI) % (2 * PI));
+//        double whereTo = dir % (2 * PI);
+//
+//        double diff = whereTo - head;
+//        double assDiff = whereTo - ass;
+//
+//        if (abs(diff) < abs(assDiff))
+//            return diff < 0 ? TURNLEFT : TURNRIGHT;
+//        else
+//            return assDiff < 0 ? TURNLEFT : TURNRIGHT;
+//    }
 }

@@ -3,23 +3,24 @@
  */
 package algorithms;
 
-import static algorithms.Orders.*;
+import static algorithms.Orders.CHILL;
 import static algorithms.WhoAmI.TANK_1;
 import static characteristics.IRadarResult.Types.OpponentMainBot;
 import static characteristics.IRadarResult.Types.OpponentSecondaryBot;
 import static characteristics.Parameters.Direction.LEFT;
 import static characteristics.Parameters.Direction.RIGHT;
-import static java.lang.Math.PI;
+import static java.lang.Math.sin;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 
 import characteristics.IRadarResult;
 import characteristics.Parameters;
-//import javafx.util.Pair;
 import robotsimulator.Brain;
 import tools.CartCoordinate;
 import tools.CoordHelper;
+
+//import javafx.util.Pair;
 
 public class MasterMind {
 
@@ -121,12 +122,12 @@ public class MasterMind {
             switch (scout.getName()) {
                 case SCOUT_1:
                     scout1 = new RobotInstruction(scout);
-                    scout1.setObjective(new CartCoordinate(500, 2000));
+                    scout1.setObjective(new CartCoordinate(500, 0));
                     System.out.println("scout1: " + scout1.getPolarBear().getAngle());
                     break;
                 case SCOUT_2:
                     scout2 = new RobotInstruction(scout);
-                    scout2.setObjective(new CartCoordinate(500, 0));
+                    scout2.setObjective(new CartCoordinate(500, 2000));
                     System.out.println("scout2: " + scout2.getPolarBear().getAngle());
                     break;
             }
@@ -165,7 +166,7 @@ public class MasterMind {
         if (slave.getName() == TANK_1) {
 
         }
-
+        double dir = 0;
         Orders currentOrder = CHILL;
         switch (slave.getName()) {
 
@@ -182,15 +183,31 @@ public class MasterMind {
                 currentOrder = tank3.getCurrentOrder();
                 break;
             case SCOUT_1:
+                dir = scout1.getPolarBear().getAngle();
                 scout1.majObj();
                 currentOrder = scout1.getCurrentOrder();
                 break;
             case SCOUT_2:
+                dir = scout2.getPolarBear().getAngle();
                 scout2.majObj();
                 currentOrder = scout2.getCurrentOrder();
                 break;
         }
-        slave.sendLogMessage(scout2.getPolarBear().getAngle()+"=>"+(slave.getHeading() % (2 * PI))+": "+((slave.getHeading() + PI) % (2 * PI)));
+        //        double head = slave.getHeading() % (2 * PI);
+        //        double ass = (slave.getHeading() + PI) % (2 * PI);
+        //        double whereTo = scout1.getPolarBear().getAngle() % (2 * PI);
+        //
+        //        double diff = whereTo - head;
+        //        double assDiff = whereTo - ass;
+        //        slave.sendLogMessage(scout1.getObjective().toString()+(assDiff < 0)+"");
+        //        slave.logPosition();
+        double cosDir = Math.cos(dir);
+        double sinDir = sin(dir);
+        double cosBot = Math.cos(slave.getHeading());
+        double sinBot = sin(slave.getHeading());
+
+        //        slave.sendLogMessage(abs(cosDir-cosBot)+"//"+abs(sinDir-sinBot));
+
         switch (currentOrder) {
             case MOVE:
                 slave.move();
