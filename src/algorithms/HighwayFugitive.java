@@ -13,7 +13,7 @@ import characteristics.Parameters;
 import characteristics.IFrontSensorResult;
 import characteristics.IRadarResult;
 
-public class HighwayFugitive extends BrainDetectScout {
+public class HighwayFugitive extends Brain {
 
   //---PARAMETERS---//
   private static final double HEADINGPRECISION = 0.001;
@@ -30,7 +30,6 @@ public class HighwayFugitive extends BrainDetectScout {
 
   //---ABSTRACT-METHODS-IMPLEMENTATION---//
   public void activate() {
-    super.activate();
     turnTask=true;
     moveTask=false;
     firstMove=true;

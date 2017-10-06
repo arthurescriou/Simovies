@@ -10,14 +10,20 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static tools.CoordHelper.cartToPol;
 
-import tools.CartCoordinate;
-import tools.PolarCoordinate;
+import java.util.ArrayList;
+
+import characteristics.IRadarResult;
+import tools.*;
 
 public class RobotInstruction {
 
     private PolarCoordinate polarBear;
     private CartCoordinate objective;
     private Orders currentOrder = CHILL;
+    private boolean done = false;
+    private int speedOf10 = 10;
+    private int cptSpeed = 0;
+
     private static final double delta = 0.1;
 
     private DetectBrain myBot;
@@ -25,6 +31,10 @@ public class RobotInstruction {
     public RobotInstruction(DetectBrain myBot) {
         this.myBot = myBot;
         setObjective(myBot.getPos());
+    }
+
+    public boolean isDone() {
+        return done;
     }
 
     public PolarCoordinate getPolarBear() {
@@ -49,21 +59,53 @@ public class RobotInstruction {
 
     public void setObjective(CartCoordinate objective) {
         this.objective = objective;
+        done = false;
         majObj();
     }
 
     public void majObj() {
+        myBot.sendLogMessage(cptSpeed + "");
         polarBear = cartToPol(getPosRobot(), objective);
-        if (polarBear.getDist() > 2) {
-            if (isHeading(polarBear.getAngle()))
-                currentOrder = MOVE;
-            else if (isLeCul(polarBear.getAngle()))
-                currentOrder = MOVEBACK;
-            else
-                currentOrder = leftOrRight(polarBear.getAngle());
-        } else
-            currentOrder = CHILL;
+        if (polarBear.getDist() > 10) {
+            if (isHeading(polarBear.getAngle())) {
+                cptSpeed++;
+                if (cptSpeed < speedOf10)
+                    currentOrder = MOVE;
+                else
+                    currentOrder = CHILL;
 
+            } else if (isLeCul(polarBear.getAngle())) {
+                cptSpeed++;
+                if (cptSpeed < speedOf10)
+                    currentOrder = MOVEBACK;
+                else
+                    currentOrder = CHILL;
+
+            } else {currentOrder = leftOrRight(polarBear.getAngle());}
+        } else {
+            currentOrder = CHILL;
+            done = true;
+        }
+        if (cptSpeed == 10)
+            cptSpeed = 0;
+    }
+
+    public void fire(CartCoordinate target) {
+        myBot.sendLogMessage(myBot.getName() + " fire at " + target);
+        //TODO deal with friendly fire
+        double dir = CoordHelper.cartToPol(myBot.getPos(), target).getAngle();
+        for (IRadarResult res : myBot.detectRadar()) {
+            IRadarResult.Types objectType = res.getObjectType();
+            if (IRadarResult.Types.TeamSecondaryBot == objectType || IRadarResult.Types.TeamMainBot == objectType) {
+                //                System.out.println(abs(res.getObjectDirection()-dir));
+                if (abs(res.getObjectDirection() - dir) < 0.25 && res.getObjectDistance() < 1000) {
+                    myBot.sendLogMessage("STOOOOOP");
+                    return;
+                }
+            }
+        }
+
+        myBot.fire(dir);
     }
 
     public boolean isHeading(double dir) {
@@ -76,16 +118,15 @@ public class RobotInstruction {
                         sin(teamBSecondaryBotStepTurnAngle);
     }
 
-    public boolean isHeading(){
+    public boolean isHeading() {
         return isHeading(polarBear.getAngle());
     }
 
     public boolean isLeCul(double dir) {
         double cosDir = cos(dir);
         double sinDir = sin(dir);
-        double cosBot = - cos(getHeading());
-        double sinBot = - sin(getHeading());
-
+        double cosBot = -cos(getHeading());
+        double sinBot = -sin(getHeading());
         return abs(cosDir - cosBot) < cos(teamBSecondaryBotStepTurnAngle) && abs(sinDir - sinBot) <
                         sin(teamBSecondaryBotStepTurnAngle);
     }
@@ -94,30 +135,28 @@ public class RobotInstruction {
         return isLeCul(polarBear.getAngle());
     }
 
+    public int getSpeedOf10() {
+        return speedOf10;
+    }
+
+    public void setSpeedOf10(int speedOf10) {
+        this.speedOf10 = speedOf10;
+    }
+
     private Orders leftOrRight(double dir) {
-        double cos = cos(getHeading()+dir);
-        double sin = sin(getHeading()+dir);
-        if(cos>0) {
+        double cos = cos(getHeading() - dir);
+        double sin = sin(getHeading() - dir);
+        if (cos > 0) {
             if (sin > 0)
                 return TURNRIGHT;
             else
                 return TURNLEFT;
-        }else
-            if(sin<0)
-                return TURNLEFT;
-            else return TURNRIGHT;
+        } else if (sin < 0)
+            return TURNLEFT;
+        else
+            return TURNRIGHT;
 
     }
-//        double head = acos(cos(getHeading()));
-//        double ass = -abs((getHeading() + PI) % (2 * PI));
-//        double whereTo = dir % (2 * PI);
-//
-//        double diff = whereTo - head;
-//        double assDiff = whereTo - ass;
-//
-//        if (abs(diff) < abs(assDiff))
-//            return diff < 0 ? TURNLEFT : TURNRIGHT;
-//        else
-//            return assDiff < 0 ? TURNLEFT : TURNRIGHT;
-//    }
+
 }
+

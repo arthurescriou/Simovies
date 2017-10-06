@@ -7,7 +7,7 @@ public class YesMasterTankBrain extends BrainDetectTank{
 
     @Override
     public void step() {
-        logPosition();
+//        logPosition();
         super.step();
         MasterMind.getInstance().giveMeOrderMaster(this);
     }
