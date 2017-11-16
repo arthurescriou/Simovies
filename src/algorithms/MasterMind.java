@@ -160,52 +160,43 @@ public class MasterMind {
 
     }
 
-    private ArrayList<DetectBrain> whoShouldNotFire(CartCoordinate target) {
-        ArrayList<DetectBrain> shouldNotFire = new ArrayList<>();
+    private boolean shouldNotFire(BrainDetectTank tank, CartCoordinate target) {
+        PolarCoordinate pc = CoordHelper.cartToPol(tank.getPos(), target);
+
+        if (pc.getDist() > 1000) {
+            return true;
+        }
+        return shouldNotFire(tank, pc.getAngle());
+    }
+
+    private boolean shouldNotFire(BrainDetectTank tank, double angle) {
         ArrayList<DetectBrain> allBot = new ArrayList<>();
         allBot.addAll(scouts);
         allBot.addAll(tanks);
-        for (BrainDetectTank tank : tanks) {
-            for (DetectBrain tk : allBot) {
-                if(tk==tank) continue;
-                PolarCoordinate pc1 = CoordHelper.cartToPol(tank.getPos(), target);
 
-                if (isBetween(pc1, tk, target)) {
-                    shouldNotFire.add(tank);
-                }
+        for (DetectBrain detectBrain : allBot) {
+            double x = detectBrain.getPos().getX();
+            double y = detectBrain.getPos().getY();
 
+            PolarCoordinate droite = CoordHelper.cartToPol(tank.getPos(), new CartCoordinate(x + 50, y));
+            PolarCoordinate gauche = CoordHelper.cartToPol(tank.getPos(), new CartCoordinate(x - 50, y));
+            PolarCoordinate bas = CoordHelper.cartToPol(tank.getPos(), new CartCoordinate(x, y + 50));
+            PolarCoordinate haut = CoordHelper.cartToPol(tank.getPos(), new CartCoordinate(x, y - 50));
+
+            if (isBetweenAngle(angle, gauche.getAngle(), droite.getAngle()) || isBetweenAngle(angle, bas.getAngle(), haut.getAngle())) {
+                return true;
             }
         }
-        return shouldNotFire;
+        return false;
     }
 
-    private boolean isBetween(PolarCoordinate pc1, DetectBrain tk, CartCoordinate target) {
-        double x = target.getX();
-        double y = target.getY();
-        target.setX(x - Parameters.teamASecondaryBotRadius);
-        PolarCoordinate left = CoordHelper
-                        .cartToPol(tk.getPos(), target);
-        target.setX(x + Parameters.teamASecondaryBotRadius);
-        PolarCoordinate right = CoordHelper
-                        .cartToPol(tk.getPos(), target);
-        target.setX(x);
-        target.setY(y - Parameters.teamASecondaryBotRadius);
-        PolarCoordinate up = CoordHelper
-                        .cartToPol(tk.getPos(), target);
-        target.setY(y + Parameters.teamASecondaryBotRadius);
-        PolarCoordinate down = CoordHelper
-                        .cartToPol(tk.getPos(), target);
 
-        return (    isBetweenAngle(pc1.getAngle(), left.getAngle(), right.getAngle())
-                 || isBetweenAngle(pc1.getAngle(), down.getAngle(), up.getAngle()));
-
-
-
-    }
 
     private double normalizeAngle(double angle) {
-        while(angle < -PI) angle += 2 * PI;
-        while(angle >  PI) angle -= 2 * PI;
+        while (angle < -PI)
+            angle += 2 * PI;
+        while (angle > PI)
+            angle -= 2 * PI;
         return angle;
     }
 
@@ -216,7 +207,7 @@ public class MasterMind {
         normalizeAngle(b);
         if (a * b >= 0) {
             return false;
-        }else
+        } else
             return Math.abs(a - b) < PI;
     }
 
@@ -225,8 +216,9 @@ public class MasterMind {
     }
 
     public void giveMeOrderMaster(DetectBrain slave) {
-        if(slave.getName()==TANK_2)
+        if (slave.getName() == TANK_2) {
             slave.fire(0);
+        }
         CartCoordinate target = fireForEffect();
         if (target != null) {
 

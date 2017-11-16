@@ -30,4 +30,8 @@ public class SprayManager {
         }
         return current;
     }
+
+    public double getAngle() {
+        return current;
+    }
 }
