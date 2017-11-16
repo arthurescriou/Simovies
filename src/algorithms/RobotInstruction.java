@@ -27,6 +27,10 @@ public class RobotInstruction {
     private SprayManager sp = new SprayManager(0, 0.01);
     private static final double delta = 0.1;
 
+    public DetectBrain getMyBot() {
+        return myBot;
+    }
+
     private DetectBrain myBot;
 
     public RobotInstruction(DetectBrain myBot) {
@@ -65,7 +69,6 @@ public class RobotInstruction {
     }
 
     public void majObj() {
-        myBot.sendLogMessage(cptSpeed + "");
         polarBear = cartToPol(getPosRobot(), objective);
         if (polarBear.getDist() > 10) {
             if (isHeading(polarBear.getAngle())) {
@@ -89,24 +92,6 @@ public class RobotInstruction {
         }
         if (cptSpeed == 10)
             cptSpeed = 0;
-    }
-
-    public void fire(CartCoordinate target) {
-        myBot.sendLogMessage(myBot.getName() + " fire at " + target);
-        //TODO deal with friendly fire
-        double dir = CoordHelper.cartToPol(myBot.getPos(), target).getAngle();
-        for (IRadarResult res : myBot.detectRadar()) {
-            IRadarResult.Types objectType = res.getObjectType();
-            if (IRadarResult.Types.TeamSecondaryBot == objectType || IRadarResult.Types.TeamMainBot == objectType) {
-                //                System.out.println(abs(res.getObjectDirection()-dir));
-                if (abs(res.getObjectDirection() - dir) < 0.25 && res.getObjectDistance() < 1000) {
-                    myBot.sendLogMessage("STOOOOOP");
-                    return;
-                }
-            }
-        }
-
-        myBot.fire(dir);
     }
 
     public boolean isHeading(double dir) {
@@ -159,11 +144,17 @@ public class RobotInstruction {
 
     }
 
-    public void fire(DetectBrain slave){
+    public double fire(DetectBrain slave) {
         double current = sp.getCurrent();
         slave.sendLogMessage(current + "");
-        slave.fire(current);
+        return current;
+    }
 
+    public void fire(CartCoordinate target) {
+        myBot.sendLogMessage(myBot.getName() + " fire at " + target);
+        //TODO deal with friendly fire
+        double dir = CoordHelper.cartToPol(myBot.getPos(), target).getAngle();
+        myBot.fire(dir);
     }
 }
 

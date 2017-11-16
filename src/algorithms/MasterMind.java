@@ -12,10 +12,10 @@ import static characteristics.IRadarResult.Types.OpponentMainBot;
 import static characteristics.IRadarResult.Types.OpponentSecondaryBot;
 import static characteristics.Parameters.Direction.LEFT;
 import static characteristics.Parameters.Direction.RIGHT;
+import static java.lang.Math.*;
 import static java.lang.Math.PI;
 
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.*;
 
 import characteristics.IRadarResult;
 import characteristics.Parameters;
@@ -31,6 +31,10 @@ public class MasterMind {
     private ArrayList<BrainDetectScout> scouts = new ArrayList<>(2);
     private ArrayList<BrainDetectTank> tanks = new ArrayList<>(3);
 
+    private ArrayList<CartCoordinate> wrecks = new ArrayList<>();
+
+    private int cptStop = 0;
+    private final int timoutStop = 5;
     private int cptBot = 0;
 
     private StateMM state = DEPLOY;
@@ -40,6 +44,8 @@ public class MasterMind {
     private RobotInstruction tank1;
     private RobotInstruction tank2;
     private RobotInstruction tank3;
+
+    private Map<DetectBrain, RobotInstruction> instrucstions = new HashMap<>();
 
     public ArrayList<Position> getTargets() {
         return targets;
@@ -67,10 +73,15 @@ public class MasterMind {
                 double radius = 0;
                 switch (r.getObjectType()) {
                     case OpponentMainBot:
+                        break;
                     case OpponentSecondaryBot:
+                        break;
                     case TeamMainBot:
+                        break;
                     case TeamSecondaryBot:
+                        break;
                     case Wreck:
+                        addWreck(rPos);
                         radius = Parameters.teamAMainBotRadius;
                         break;
                     case BULLET:
@@ -121,6 +132,7 @@ public class MasterMind {
             switch (scout.getName()) {
                 case SCOUT_1:
                     scout1 = new RobotInstruction(scout);
+                    instrucstions.put(scout, scout1);
                     scout1.setObjective(new CartCoordinate(500, 650));
                     break;
                 case SCOUT_2:
@@ -133,14 +145,17 @@ public class MasterMind {
             switch (tank.getName()) {
                 case TANK_1:
                     tank1 = new RobotInstruction(tank);
+                    instrucstions.put(tank, tank1);
                     tank1.setObjective(new CartCoordinate(350, 450));
                     break;
                 case TANK_2:
                     tank2 = new RobotInstruction(tank);
+                    instrucstions.put(tank, tank2);
                     tank2.setObjective(new CartCoordinate(100, 1050));
                     break;
                 case TANK_3:
                     tank3 = new RobotInstruction(tank);
+                    instrucstions.put(tank, tank3);
                     tank3.setObjective(new CartCoordinate(350, 1650));
                     break;
             }
@@ -183,14 +198,13 @@ public class MasterMind {
             PolarCoordinate bas = CoordHelper.cartToPol(tank.getPos(), new CartCoordinate(x, y + 50));
             PolarCoordinate haut = CoordHelper.cartToPol(tank.getPos(), new CartCoordinate(x, y - 50));
 
-            if (isBetweenAngle(angle, gauche.getAngle(), droite.getAngle()) || isBetweenAngle(angle, bas.getAngle(), haut.getAngle())) {
+            if (isBetweenAngle(angle, gauche.getAngle(), droite.getAngle()) || isBetweenAngle(angle, bas
+                            .getAngle(), haut.getAngle())) {
                 return true;
             }
         }
         return false;
     }
-
-
 
     private double normalizeAngle(double angle) {
         while (angle < -PI)
@@ -216,15 +230,13 @@ public class MasterMind {
     }
 
     public void giveMeOrderMaster(DetectBrain slave) {
-        if (slave.getName() == TANK_2) {
-            slave.fire(0);
-        }
+
+//        System.out.println(wrecks.size());
         CartCoordinate target = fireForEffect();
         if (target != null) {
-
-            tank1.fire(target);
-            tank2.fire(target);
-            tank3.fire(target);
+            fire(target, tank1.getMyBot());
+            fire(target, tank2.getMyBot());
+            fire(target, tank3.getMyBot());
             return;
         }
         if (slave.getName() == TANK_1) {
@@ -257,33 +269,31 @@ public class MasterMind {
 
             case TANK_1:
                 tank1.majObj();
-                tank1.fire(slave);
+                fire(tank1.fire(slave), slave);
                 currentOrder = tank1.getCurrentOrder();
                 //                slave.sendLogMessage("" + tank1.isDone() + " " + currentOrder);
                 break;
             case TANK_2:
                 tank2.majObj();
-                tank2.fire(slave);
+                fire(tank2.fire(slave), slave);
                 currentOrder = tank2.getCurrentOrder();
                 //                slave.sendLogMessage("" + tank2.isDone() + " " + currentOrder);
                 break;
             case TANK_3:
                 tank3.majObj();
-                tank3.fire(slave);
+                fire(tank3.fire(slave), slave);
                 currentOrder = tank3.getCurrentOrder();
                 //                slave.sendLogMessage("" + tank3.isDone() + " " + currentOrder);
                 break;
             case SCOUT_1:
                 scout1.majObj();
-                scout1.fire(slave);
                 currentOrder = scout1.getCurrentOrder();
-                //                slave.sendLogMessage("" + scout1.isDone() + " " + currentOrder);
+                                slave.sendLogMessage("" + scout1.isDone() + " " + currentOrder);
                 break;
             case SCOUT_2:
                 scout2.majObj();
-                scout2.fire(slave);
                 currentOrder = scout2.getCurrentOrder();
-                //                slave.sendLogMessage("" + scout2.isDone() + " " + currentOrder);
+                                slave.sendLogMessage("" + scout2.isDone() + " " + currentOrder);
                 break;
         }
 
@@ -304,5 +314,31 @@ public class MasterMind {
                 break;
 
         }
+    }
+
+    private void addWreck(CartCoordinate pos) {
+        for (CartCoordinate wreck : wrecks) {
+            if (abs(wreck.getX() - pos.getX()) < 1 && abs(wreck.getY() - pos.getY()) < 1)
+                return;
+        }
+        wrecks.add(pos);
+    }
+
+    private boolean fire(double angle, DetectBrain bot) {
+        BrainDetectTank tank = (BrainDetectTank) bot;
+        if (!shouldNotFire(tank, angle)) {
+            bot.fire(angle);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean fire(CartCoordinate target, DetectBrain bot) {
+        BrainDetectTank tank = (BrainDetectTank) bot;
+        if (!shouldNotFire(tank, target)) {
+            instrucstions.get(bot).fire(target);
+            return true;
+        }
+        return false;
     }
 }
