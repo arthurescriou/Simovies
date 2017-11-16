@@ -24,8 +24,9 @@ public class RobotInstruction {
     private boolean done = false;
     private int speedOf10 = 10;
     private int cptSpeed = 0;
-    private SprayManager sp = new SprayManager(0, 0.01);
+    private SprayManager sp ;
     private static final double delta = 0.1;
+    public int cptStop = 0;
 
     public DetectBrain getMyBot() {
         return myBot;
@@ -36,6 +37,7 @@ public class RobotInstruction {
     public RobotInstruction(DetectBrain myBot) {
         this.myBot = myBot;
         setObjective(myBot.getPos());
+        sp = new SprayManager(myBot.isTeamGauche()?0:PI, 0.01);
     }
 
     public boolean isDone() {

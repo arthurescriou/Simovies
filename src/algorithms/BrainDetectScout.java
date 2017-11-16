@@ -18,7 +18,7 @@ import tools.CartCoordinate;
 public abstract class BrainDetectScout extends DetectBrain {
 
     private double cpt = 0;
-    private boolean teamGauche;
+
     private MasterMind mm = MasterMind.getInstance();
 
     public void activate() {
@@ -92,6 +92,7 @@ public abstract class BrainDetectScout extends DetectBrain {
     public WhoAmI getName() {
         return name;
     }
+
 
 
 }

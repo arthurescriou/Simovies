@@ -46,30 +46,36 @@ public abstract class BrainDetectTank extends DetectBrain {
             first = true;
             if (gauche) {
                 name = TANK_1;
+                teamGauche = true;
                 myPosition = new CartCoordinate(Parameters.teamAMainBot1InitX + 50, Parameters.teamAMainBot1InitY + 50);
             }
             if (droite) {
                 name = TANK_1;
+                teamGauche = false;
                 myPosition = new CartCoordinate(Parameters.teamBMainBot1InitX + 50, Parameters.teamBMainBot1InitY + 50);
             }
         }
         if (auDessus == 1 && enDessous == 1) {
             if (gauche) {
                 name = TANK_2;
+                teamGauche = true;
                 myPosition = new CartCoordinate(Parameters.teamAMainBot2InitX + 50, Parameters.teamAMainBot2InitY + 50);
             }
             if (droite) {
                 name = TANK_2;
+                teamGauche = false;
                 myPosition = new CartCoordinate(Parameters.teamBMainBot2InitX + 50, Parameters.teamBMainBot2InitY + 50);
             }
         }
         if (enDessous == 0) {
             if (gauche) {
                 name = TANK_3;
+                teamGauche = true;
                 myPosition = new CartCoordinate(Parameters.teamAMainBot3InitX + 50, Parameters.teamAMainBot3InitY + 50);
             }
             if (droite) {
                 name = TANK_3;
+                teamGauche = false;
                 myPosition = new CartCoordinate(Parameters.teamBMainBot3InitX + 50, Parameters.teamBMainBot3InitY + 50);
             }
         }

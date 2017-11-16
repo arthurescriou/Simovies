@@ -18,6 +18,7 @@ public abstract class DetectBrain extends Brain {
     protected CartCoordinate myPosition;
     protected WhoAmI name;
     protected double moveSpeed;
+    protected boolean teamGauche;
 
     public WhoAmI getName() {
         return name;
@@ -86,5 +87,9 @@ public abstract class DetectBrain extends Brain {
     @Override
     public void moveBack() {
         move(true);
+    }
+
+    public boolean isTeamGauche() {
+        return teamGauche;
     }
 }

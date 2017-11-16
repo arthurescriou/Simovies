@@ -9,7 +9,7 @@ public class SprayManager {
 
     private double current, step, init;
     private boolean sens = true;
-    private final double angle = PI / 3;
+    private final double angle = PI / 6;
 
     public SprayManager(double current, double step) {
         this.current = current;
