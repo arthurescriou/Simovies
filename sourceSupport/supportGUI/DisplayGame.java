@@ -215,7 +215,7 @@ public class DisplayGame extends javax.swing.JPanel {
                 double tempX = DetectBrainAffichage.getInstance().getScout(j).getPos().getX()-50;
                 double tempY = DetectBrainAffichage.getInstance().getScout(j).getPos().getY()-50;
 
-                Circle c = new Circle(new CartCoordinate((int)Math.round(tempX),(int)Math.round(tempY)), 500, Color.BLACK);
+                Circle c = new Circle(new CartCoordinate((int)Math.round(tempX),(int)Math.round(tempY)), 550, Color.BLACK);
                 c.draw(g2d, xModifier, yModifier, zoomFactor, 1);
             }
         }
@@ -227,7 +227,7 @@ public class DisplayGame extends javax.swing.JPanel {
                 double tempX = DetectBrainAffichage.getInstance().getTank(j).getPos().getX()-50;
                 double tempY = DetectBrainAffichage.getInstance().getTank(j).getPos().getY()-50;
 
-                Circle c = new Circle(new CartCoordinate((int)Math.round(tempX),(int)Math.round(tempY)), 200, Color.BLACK);
+                Circle c = new Circle(new CartCoordinate((int)Math.round(tempX),(int)Math.round(tempY)), 250, Color.BLACK);
                 c.draw(g2d, xModifier, yModifier, zoomFactor, 1);
             }
         }
