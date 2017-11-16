@@ -7,6 +7,7 @@ import static algorithms.Orders.CHILL;
 import static algorithms.StateMM.CHARGE;
 import static algorithms.StateMM.DEPLOY;
 import static algorithms.WhoAmI.TANK_1;
+import static algorithms.WhoAmI.TANK_2;
 import static characteristics.IRadarResult.Types.OpponentMainBot;
 import static characteristics.IRadarResult.Types.OpponentSecondaryBot;
 import static characteristics.Parameters.Direction.LEFT;
@@ -224,6 +225,8 @@ public class MasterMind {
     }
 
     public void giveMeOrderMaster(DetectBrain slave) {
+        if(slave.getName()==TANK_2)
+            slave.fire(0);
         CartCoordinate target = fireForEffect();
         if (target != null) {
 
@@ -248,9 +251,9 @@ public class MasterMind {
                         scout1.setObjective(new CartCoordinate(3000, 650));
                         scout2.setSpeedOf10(4);
                         scout2.setObjective(new CartCoordinate(3000, 1455));
-                        tank1.setObjective(new CartCoordinate(3000, 1050));
-                        tank2.setObjective(new CartCoordinate(3000, 1650));
-                        tank3.setObjective(new CartCoordinate(3000, 1450));
+                        tank1.setObjective(new CartCoordinate(3000, 450));
+                        tank2.setObjective(new CartCoordinate(3000, 1050));
+                        tank3.setObjective(new CartCoordinate(3000, 1650));
                         break;
                 }
             }
@@ -262,26 +265,31 @@ public class MasterMind {
 
             case TANK_1:
                 tank1.majObj();
+                tank1.fire(slave);
                 currentOrder = tank1.getCurrentOrder();
                 //                slave.sendLogMessage("" + tank1.isDone() + " " + currentOrder);
                 break;
             case TANK_2:
                 tank2.majObj();
+                tank2.fire(slave);
                 currentOrder = tank2.getCurrentOrder();
                 //                slave.sendLogMessage("" + tank2.isDone() + " " + currentOrder);
                 break;
             case TANK_3:
                 tank3.majObj();
+                tank3.fire(slave);
                 currentOrder = tank3.getCurrentOrder();
                 //                slave.sendLogMessage("" + tank3.isDone() + " " + currentOrder);
                 break;
             case SCOUT_1:
                 scout1.majObj();
+                scout1.fire(slave);
                 currentOrder = scout1.getCurrentOrder();
                 //                slave.sendLogMessage("" + scout1.isDone() + " " + currentOrder);
                 break;
             case SCOUT_2:
                 scout2.majObj();
+                scout2.fire(slave);
                 currentOrder = scout2.getCurrentOrder();
                 //                slave.sendLogMessage("" + scout2.isDone() + " " + currentOrder);
                 break;

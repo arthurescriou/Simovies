@@ -5,6 +5,7 @@ package algorithms;
 
 import static algorithms.Orders.*;
 import static characteristics.Parameters.teamBSecondaryBotStepTurnAngle;
+import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -23,7 +24,7 @@ public class RobotInstruction {
     private boolean done = false;
     private int speedOf10 = 10;
     private int cptSpeed = 0;
-
+    private SprayManager sp = new SprayManager(0, 0.01);
     private static final double delta = 0.1;
 
     private DetectBrain myBot;
@@ -158,5 +159,11 @@ public class RobotInstruction {
 
     }
 
+    public void fire(DetectBrain slave){
+        double current = sp.getCurrent();
+        slave.sendLogMessage(current + "");
+        slave.fire(current);
+
+    }
 }
 
