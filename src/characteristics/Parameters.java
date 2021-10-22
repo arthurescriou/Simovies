@@ -21,8 +21,8 @@ public class Parameters {
   //-----------------------//
   //---TEAM-A-PARAMETERS---//
   //-----------------------//
-  public static final String teamAName = "New and Decentralised";
-  public static final String teamAMainBotBrainClassName = "algorithms.YesMasterTankBrain"; //class given by name; is supposed to extends robotsimulator.Brain
+  public static final String teamAName = "We Used To Love Asiats";
+  public static final String teamAMainBotBrainClassName = "weUsedToLoveAsiats.WulaMain"; //class given by name; is supposed to extends robotsimulator.Brain
   public static final String teamAMainBotAvatar = "avatars/Bitcoin.png"; //path relative to location of ant build.xml file
   public static final double teamAMainBotRadius = 50, //1 unit = 1mm, body radius
                              teamAMainBotFrontalDetectionRange = 300, //1 unit = 1mm, range of frontal sensor
@@ -40,7 +40,7 @@ public class Parameters {
                              teamAMainBot3InitY = 1200, //1 unit = 1mm, coordinate of central point
                              teamAMainBot3InitHeading = EAST; //clockwise trigonometric unit, according to screen pixel coordinate reference
 
-  public static final String teamASecondaryBotBrainClassName = "algorithms.YesMasterScoutBrain"; //class given by name; is supposed to extends robotsimulator.Brain
+  public static final String teamASecondaryBotBrainClassName = "weUsedToLoveAsiats.WulaSecondary"; //class given by name; is supposed to extends robotsimulator.Brain
   public static final String teamASecondaryBotAvatar = "avatars/ethereum.png"; //path relative to location of ant build.xml file
   public static final double teamASecondaryBotRadius = 50, //1 unit = 1mm, body radius
                              teamASecondaryBotFrontalDetectionRange = 500, //1 unit = 1mm, range of frontal sensor
@@ -54,7 +54,7 @@ public class Parameters {
                              teamASecondaryBot2InitX = 500, //1 unit = 1mm, coordinate of central point
                              teamASecondaryBot2InitY = 1200, //1 unit = 1mm, coordinate of central point
                              teamASecondaryBot2InitHeading = EAST; //clockwise trigonometric unit, according to screen pixel coordinate reference
-  
+
   //-----------------------//
   //---TEAM-B-PARAMETERS---//
   //-----------------------//
@@ -77,7 +77,7 @@ public class Parameters {
                              teamBMainBot3InitY = 1200, //1 unit = 1mm, coordinate of central point
                              teamBMainBot3InitHeading = WEST; //clockwise trigonometric unit, according to screen pixel coordinate reference
 
-  public static final String teamBSecondaryBotBrainClassName = "algorithms.BootingBerzerk"; //class given by name; is supposed to extends robotsimulator.Brain
+  public static final String teamBSecondaryBotBrainClassName = "algorithms.HighwayFugitive"; //class given by name; is supposed to extends robotsimulator.Brain
   public static final String teamBSecondaryBotAvatar = "avatars/euro.png"; //path relative to location of ant build.xml file
   public static final double teamBSecondaryBotRadius = 50, //1 unit = 1mm, body radius
                              teamBSecondaryBotFrontalDetectionRange = 500, //1 unit = 1mm, range of frontal sensor

@@ -9,9 +9,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
-import algorithms.*;
 import robotsimulator.*;
-import tools.CartCoordinate;
+import weUsedToLoveAsiats.DetectBrainAffichage;
+import weUsedToLoveAsiats.MasterMind;
+import weUsedToLoveAsiats.tools.CartCoordinate;
+import weUsedToLoveAsiats.tools.trucsDeBinhNul.Position;
 
 public class DisplayGame extends javax.swing.JPanel {
 

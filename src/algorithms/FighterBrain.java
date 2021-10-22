@@ -6,7 +6,7 @@ package algorithms;
 import java.util.Random;
 
 import characteristics.Parameters;
-import tools.*;
+import weUsedToLoveAsiats.BrainDetectTank;
 
 public class FighterBrain extends BrainDetectTank {
 
