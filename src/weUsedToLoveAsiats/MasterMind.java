@@ -35,6 +35,7 @@ public class MasterMind {
 
     private ArrayList<CartCoordinate> wrecks = new ArrayList<>();
 
+    private int rerunAStar = 0;
     private int cptBot = 0;
     private int deadBot = 0;
     private int scout1Isdead = 0;
@@ -282,11 +283,12 @@ public class MasterMind {
     }
 
     private void seekAndDestroyPath() {
+        rerunAStar++;
         System.out.println("re find path");
-        scout1.setSpeedOf10(4);
-        scout2.setSpeedOf10(4);
+        scout1.setSpeedOf10(10);
+        scout2.setSpeedOf10(10);
         pathScout1 = Astar.aStar(scout1.getPosRobot(), new CartCoordinate(left ? 2900 : 2000, 600), wrecks);
-        pathScout2 = Astar.aStar(scout2.getPosRobot(), new CartCoordinate(left ? 2900 : 2000, 1400), wrecks);
+        pathScout2 = Astar.aStar(scout2.getPosRobot(), new CartCoordinate(left ? 2900 : 2000, 1500), wrecks);
         pathTank1 = Astar.aStar(tank1.getPosRobot(), new CartCoordinate(left ? 2900 : 2000, 400), wrecks);
         pathTank2 = Astar.aStar(tank2.getPosRobot(), new CartCoordinate(left ? 2900 : 2000, 1100), wrecks);
         pathTank3 = Astar.aStar(tank3.getPosRobot(), new CartCoordinate(left ? 2900 : 2000, 1700), wrecks);
@@ -306,35 +308,26 @@ public class MasterMind {
                 pathScout1 = new ArrayList<>();
                 pathScout2 = new ArrayList<>();
             }
-
+        }
+        if (state == TURN) {
             switch (slave.getName()) {
                 case TANK_1:
-                    if (slave.getHealth() < 0) tank1Isdead = 1;
-
                     if (pathTank1 == null || pathTank1.isEmpty()) pathTank1 = findPath(slave.getPos(), wrecks);
                     currentOrder = turnAround(pathTank1, slave, tank1);
                     break;
                 case TANK_2:
-                    if (slave.getHealth() < 0) tank2Isdead = 1;
-
                     if (pathTank2 == null || pathTank2.isEmpty()) pathTank2 = findPath(slave.getPos(), wrecks);
                     currentOrder = turnAround(pathTank2, slave, tank2);
                     break;
                 case TANK_3:
-                    if (slave.getHealth() < 0) tank3Isdead = 1;
-
                     if (pathTank3 == null || pathTank3.isEmpty()) pathTank3 = findPath(slave.getPos(), wrecks);
                     currentOrder = turnAround(pathTank3, slave, tank3);
                     break;
                 case SCOUT_1:
-                    if (slave.getHealth() < 0) scout1Isdead = 1;
-
                     if (pathScout1 == null || pathScout1.isEmpty()) pathScout1 = findPath(slave.getPos(), wrecks);
                     currentOrder = turnAround(pathScout1, slave, scout1);
                     break;
                 case SCOUT_2:
-                    if (slave.getHealth() < 0) scout2Isdead = 1;
-
                     if (pathScout2 == null || pathScout2.isEmpty()) pathScout2 = findPath(slave.getPos(), wrecks);
                     currentOrder = turnAround(pathScout2, slave, scout2);
                     break;
@@ -376,8 +369,6 @@ public class MasterMind {
             if (done() && state == DEPLOY) {
                 state = CHARGE;
                 System.out.println(CHARGE);
-                scout1.setSpeedOf10(4);
-                scout2.setSpeedOf10(4);
                 seekAndDestroyPath();
             }
 
@@ -386,46 +377,65 @@ public class MasterMind {
             switch (slave.getName()) {
 
                 case TANK_1:
+                    if (slave.getHealth() <= 0) {
+                        tank1Isdead = 1;
+                        addWreck(slave.getPos());
+                    }
                     if (tank1.isDone() && !pathTank1.isEmpty()) tank1.setObjective(pathTank1.remove(0));
                     tank1.majObj();
                     if (!t1Ashot) {
                         fire(tank1.fire(slave), slave);
                         currentOrder = tank1.getCurrentOrder();
                     }
-                    if (state != TURN)
-                        slave.sendLogMessage(tank1.isDone()+ " go to "+ tank1.getObjective());
+                    slave.sendLogMessage(tank1.isDone() + " go to " + tank1.getObjective() + " " + wrecks.size() + "-" + deadBot);
                     break;
                 case TANK_2:
+                    if (slave.getHealth() <= 0) {
+                        tank2Isdead = 1;
+                        addWreck(slave.getPos());
+                    }
                     if (tank2.isDone() && !pathTank2.isEmpty()) tank2.setObjective(pathTank2.remove(0));
                     tank2.majObj();
                     if (!t2Ashot) {
                         fire(tank2.fire(slave), slave);
                         currentOrder = tank2.getCurrentOrder();
                     }
-                    if (state != TURN) slave.sendLogMessage(tank2.isDone()+ " go to "+ tank2.getObjective());
+                    slave.sendLogMessage(tank2.isDone() + " go to " + tank2.getObjective());
                     break;
                 case TANK_3:
+                    if (slave.getHealth() <= 0) {
+                        tank2Isdead = 1;
+                        addWreck(slave.getPos());
+                    }
                     if (tank3.isDone() && !pathTank3.isEmpty()) tank3.setObjective(pathTank3.remove(0));
                     tank3.majObj();
                     if (!t3Ashot) {
                         fire(tank3.fire(slave), slave);
                         currentOrder = tank3.getCurrentOrder();
                     }
-                    if (state != TURN) slave.sendLogMessage(tank3.isDone()+ " go to "+ tank3.getObjective());
+                    slave.sendLogMessage(tank3.isDone() + " go to " + tank3.getObjective());
                     break;
                 case SCOUT_1:
+                    if (slave.getHealth() <= 0) {
+                        scout1Isdead = 1;
+                        addWreck(slave.getPos());
+                    }
                     if (scout1.isDone() && !pathScout1.isEmpty()) scout1.setObjective(pathScout1.remove(0));
                     scout1.majObj();
                     if (!t1Ashot)
                         currentOrder = scout1.getCurrentOrder();
-                    if (state != TURN) slave.sendLogMessage(scout1.isDone()+ " go to "+ scout1.getObjective());
+                    slave.sendLogMessage(scout1.isDone() + " go to " + scout1.getObjective() + " " + slave.getHealth());
                     break;
                 case SCOUT_2:
+                    if (slave.getHealth() <= 0) {
+                        scout2Isdead = 1;
+                        addWreck(slave.getPos());
+                    }
                     if (scout2.isDone() && !pathScout2.isEmpty()) scout2.setObjective(pathScout2.remove(0));
                     scout2.majObj();
                     if (!t3Ashot)
                         currentOrder = scout2.getCurrentOrder();
-                    if (state != TURN) slave.sendLogMessage(scout2.isDone()+ " go to "+ scout2.getObjective());
+                    slave.sendLogMessage(scout2.isDone() + " go to " + scout2.getObjective() + " " + slave.getHealth());
                     break;
             }
         }
@@ -453,8 +463,8 @@ public class MasterMind {
             if (abs(wreck.getX() - pos.getX()) < 1 && abs(wreck.getY() - pos.getY()) < 1)
                 return;
         }
-        seekAndDestroyPath();
         wrecks.add(pos);
+        seekAndDestroyPath();
     }
 
     private boolean fire(double angle, DetectBrain bot) {
