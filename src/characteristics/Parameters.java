@@ -41,7 +41,7 @@ public class Parameters {
                              teamAMainBot3InitHeading = EAST; //clockwise trigonometric unit, according to screen pixel coordinate reference
 
   public static final String teamASecondaryBotBrainClassName = "weUsedToLoveAsiats.WulaSecondary"; //class given by name; is supposed to extends robotsimulator.Brain
-  public static final String teamASecondaryBotAvatar = "avatars/flecheGauche.png"; //path relative to location of ant build.xml file
+  public static final String teamASecondaryBotAvatar = "avatars/ethereum.png"; //path relative to location of ant build.xml file
   public static final double teamASecondaryBotRadius = 50, //1 unit = 1mm, body radius
                              teamASecondaryBotFrontalDetectionRange = 500, //1 unit = 1mm, range of frontal sensor
                              teamASecondaryBotFrontalDetectionAngle = 0, //UNUSED AT THE MOMENT, frontal sensor detection angle is suppoed to be absolute

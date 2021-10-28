@@ -402,7 +402,7 @@ public class MasterMind {
                         fire(tank2.fire(slave), slave);
                         currentOrder = tank2.getCurrentOrder();
                     }
-                    if (state != TURN) slave.sendLogMessage("" + tank2.isDone() + " " + currentOrder);
+                    if (state != TURN) slave.sendLogMessage(tank2.isDone()+ " go to "+ tank2.getObjective());
                     break;
                 case TANK_3:
                     if (tank3.isDone() && !pathTank3.isEmpty()) tank3.setObjective(pathTank3.remove(0));
@@ -411,21 +411,21 @@ public class MasterMind {
                         fire(tank3.fire(slave), slave);
                         currentOrder = tank3.getCurrentOrder();
                     }
-                    if (state != TURN) slave.sendLogMessage("" + tank3.isDone() + " " + currentOrder);
+                    if (state != TURN) slave.sendLogMessage(tank3.isDone()+ " go to "+ tank3.getObjective());
                     break;
                 case SCOUT_1:
                     if (scout1.isDone() && !pathScout1.isEmpty()) scout1.setObjective(pathScout1.remove(0));
                     scout1.majObj();
                     if (!t1Ashot)
                         currentOrder = scout1.getCurrentOrder();
-                    if (state != TURN) slave.sendLogMessage("" + scout1.isDone() + " " + currentOrder);
+                    if (state != TURN) slave.sendLogMessage(scout1.isDone()+ " go to "+ scout1.getObjective());
                     break;
                 case SCOUT_2:
                     if (scout2.isDone() && !pathScout2.isEmpty()) scout2.setObjective(pathScout2.remove(0));
                     scout2.majObj();
                     if (!t3Ashot)
                         currentOrder = scout2.getCurrentOrder();
-                    if (state != TURN) slave.sendLogMessage("" + scout2.isDone() + " " + currentOrder);
+                    if (state != TURN) slave.sendLogMessage(scout2.isDone()+ " go to "+ scout2.getObjective());
                     break;
             }
         }
