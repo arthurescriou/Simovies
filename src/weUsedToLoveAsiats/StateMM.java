@@ -4,5 +4,5 @@
 package weUsedToLoveAsiats;
 
 public enum StateMM {
-    ENEMY,DEPLOY,CHARGE
+    ENEMY,DEPLOY,CHARGE,TURN
 }

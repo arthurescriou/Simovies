@@ -3,9 +3,8 @@
  */
 package weUsedToLoveAsiats;
 
+import static weUsedToLoveAsiats.StateMM.*;
 import static weUsedToLoveAsiats.tools.trucsDeBinhNul.Orders.CHILL;
-import static weUsedToLoveAsiats.StateMM.CHARGE;
-import static weUsedToLoveAsiats.StateMM.DEPLOY;
 import static characteristics.IRadarResult.Types.OpponentMainBot;
 import static characteristics.IRadarResult.Types.OpponentSecondaryBot;
 import static characteristics.Parameters.Direction.LEFT;
@@ -37,6 +36,12 @@ public class MasterMind {
     private ArrayList<CartCoordinate> wrecks = new ArrayList<>();
 
     private int cptBot = 0;
+    private int deadBot = 0;
+    private int scout1Isdead = 0;
+    private int scout2Isdead = 0;
+    private int tank1Isdead = 0;
+    private int tank2Isdead = 0;
+    private int tank3Isdead = 0;
 
     private StateMM state = DEPLOY;
 
@@ -45,6 +50,12 @@ public class MasterMind {
     private RobotInstruction tank1;
     private RobotInstruction tank2;
     private RobotInstruction tank3;
+
+    private ArrayList<CartCoordinate> pathScout1 = new ArrayList<>();
+    private ArrayList<CartCoordinate> pathScout2 = new ArrayList<>();
+    private ArrayList<CartCoordinate> pathTank1 = new ArrayList<>();
+    private ArrayList<CartCoordinate> pathTank2 = new ArrayList<>();
+    private ArrayList<CartCoordinate> pathTank3 = new ArrayList<>();
 
     private Map<DetectBrain, RobotInstruction> instrucstions = new HashMap<>();
 
@@ -70,7 +81,7 @@ public class MasterMind {
 
             for (IRadarResult r : report) {
                 CartCoordinate rPos = CoordHelper
-                                .polToCart(pos, r.getObjectDirection(), r.getObjectDistance());
+                        .polToCart(pos, r.getObjectDirection(), r.getObjectDistance());
                 double radius = 0;
                 switch (r.getObjectType()) {
                     case OpponentMainBot:
@@ -102,13 +113,13 @@ public class MasterMind {
         CartCoordinate avg = new CartCoordinate(avgX, avgY);
 
         List<CartCoordinate> collect = targets.stream().filter(pos -> pos.getTypes() == OpponentMainBot)
-                        .map(pos -> new CartCoordinate(pos.getX(), pos.getY()))
-                        .collect(Collectors.toList());
+                .map(pos -> new CartCoordinate(pos.getX(), pos.getY()))
+                .collect(Collectors.toList());
         ennemies.addAll(collect);
 
         List<CartCoordinate> collect2 = targets.stream().filter(pos -> pos.getTypes() == OpponentSecondaryBot)
-                        .map(pos -> new CartCoordinate(pos.getX(), pos.getY()))
-                        .collect(Collectors.toList());
+                .map(pos -> new CartCoordinate(pos.getX(), pos.getY()))
+                .collect(Collectors.toList());
         ennemies.addAll(collect2);
 
         return ennemies;
@@ -200,7 +211,7 @@ public class MasterMind {
             PolarCoordinate hd = CoordHelper.cartToPol(tank.getPos(), new CartCoordinate(x + 60, y - 60));
 
             if (isBetweenAngle(angle, hg.getAngle(), bd.getAngle()) || isBetweenAngle(angle, bg
-                            .getAngle(), hd.getAngle())) {
+                    .getAngle(), hd.getAngle())) {
                 return true;
             }
         }
@@ -214,7 +225,7 @@ public class MasterMind {
             PolarCoordinate hd = CoordHelper.cartToPol(tank.getPos(), new CartCoordinate(x + 60, y - 60));
 
             if (isBetweenAngle(angle, hg.getAngle(), bd.getAngle()) || isBetweenAngle(angle, bg
-                            .getAngle(), hd.getAngle())) {
+                    .getAngle(), hd.getAngle())) {
                 return true;
             }
         }
@@ -244,7 +255,91 @@ public class MasterMind {
         return scout1.isDone() && scout2.isDone() && tank1.isDone() && tank2.isDone() && tank3.isDone();
     }
 
+    private ArrayList<CartCoordinate> findPath(CartCoordinate coord, ArrayList<CartCoordinate> wrecks) {
+        System.out.println("find a path");
+        CartCoordinate UpLeft = new CartCoordinate(200, 200);
+        CartCoordinate underUpLeft = new CartCoordinate(400, 1000);
+        CartCoordinate righterUpLeft = new CartCoordinate(1200, 200);
+        CartCoordinate DownRight = new CartCoordinate(2600, 1800);
+        CartCoordinate upperDownRight = new CartCoordinate(2800, 1000);
+        ArrayList<CartCoordinate> res = new ArrayList<>();
+
+        res.addAll(Astar.aStar(coord, underUpLeft, wrecks));
+        res.addAll(Astar.aStar(underUpLeft, UpLeft, wrecks));
+        res.addAll(Astar.aStar(UpLeft, righterUpLeft, wrecks));
+        res.addAll(Astar.aStar(righterUpLeft, DownRight, wrecks));
+        res.addAll(Astar.aStar(DownRight, upperDownRight, wrecks));
+        return res;
+    }
+
+    private Orders turnAround(ArrayList<CartCoordinate> path, DetectBrain slave, RobotInstruction robot) {
+        if (robot.isDone()) path.remove(0);
+        if (path.isEmpty()) return robot.getCurrentOrder();
+        slave.sendLogMessage("go to " + path.get(0));
+        robot.setObjective(path.get(0));
+        robot.majObj();
+        return robot.getCurrentOrder();
+    }
+
+    private void seekAndDestroyPath() {
+        System.out.println("re find path");
+        scout1.setSpeedOf10(4);
+        scout2.setSpeedOf10(4);
+        pathScout1 = Astar.aStar(scout1.getPosRobot(), new CartCoordinate(left ? 2900 : 2000, 600), wrecks);
+        pathScout2 = Astar.aStar(scout2.getPosRobot(), new CartCoordinate(left ? 2900 : 2000, 1400), wrecks);
+        pathTank1 = Astar.aStar(tank1.getPosRobot(), new CartCoordinate(left ? 2900 : 2000, 400), wrecks);
+        pathTank2 = Astar.aStar(tank2.getPosRobot(), new CartCoordinate(left ? 2900 : 2000, 1100), wrecks);
+        pathTank3 = Astar.aStar(tank3.getPosRobot(), new CartCoordinate(left ? 2900 : 2000, 1700), wrecks);
+    }
+
     public void giveMeOrderMaster(DetectBrain slave) {
+        deadBot = tank1Isdead + tank2Isdead + tank3Isdead + scout1Isdead + scout2Isdead;
+        Orders currentOrder = CHILL;
+        boolean wall = scout1.getPosRobot().getX() > 2900 || scout2.getPosRobot().getX() > 2900 || tank1.getPosRobot().getX() > 2900 || tank2.getPosRobot().getX() > 2900 || tank3.getPosRobot().getX() > 2900;
+        if (wrecks.size() >= 5 + deadBot && left || wall) {
+            if (state != TURN) {
+                System.out.println(TURN);
+                state = TURN;
+                pathTank1 = new ArrayList<>();
+                pathTank2 = new ArrayList<>();
+                pathTank3 = new ArrayList<>();
+                pathScout1 = new ArrayList<>();
+                pathScout2 = new ArrayList<>();
+            }
+
+            switch (slave.getName()) {
+                case TANK_1:
+                    if (slave.getHealth() < 0) tank1Isdead = 1;
+
+                    if (pathTank1 == null || pathTank1.isEmpty()) pathTank1 = findPath(slave.getPos(), wrecks);
+                    currentOrder = turnAround(pathTank1, slave, tank1);
+                    break;
+                case TANK_2:
+                    if (slave.getHealth() < 0) tank2Isdead = 1;
+
+                    if (pathTank2 == null || pathTank2.isEmpty()) pathTank2 = findPath(slave.getPos(), wrecks);
+                    currentOrder = turnAround(pathTank2, slave, tank2);
+                    break;
+                case TANK_3:
+                    if (slave.getHealth() < 0) tank3Isdead = 1;
+
+                    if (pathTank3 == null || pathTank3.isEmpty()) pathTank3 = findPath(slave.getPos(), wrecks);
+                    currentOrder = turnAround(pathTank3, slave, tank3);
+                    break;
+                case SCOUT_1:
+                    if (slave.getHealth() < 0) scout1Isdead = 1;
+
+                    if (pathScout1 == null || pathScout1.isEmpty()) pathScout1 = findPath(slave.getPos(), wrecks);
+                    currentOrder = turnAround(pathScout1, slave, scout1);
+                    break;
+                case SCOUT_2:
+                    if (slave.getHealth() < 0) scout2Isdead = 1;
+
+                    if (pathScout2 == null || pathScout2.isEmpty()) pathScout2 = findPath(slave.getPos(), wrecks);
+                    currentOrder = turnAround(pathScout2, slave, scout2);
+                    break;
+            }
+        }
         boolean t1Ashot = false;
         boolean t2Ashot = false;
         boolean t3Ashot = false;
@@ -273,69 +368,67 @@ public class MasterMind {
         if (slave.getName() == TANK_1) {
 
             if (scout1.isDone() && state == DEPLOY && tank1.isDone())
-                scout1.setObjective(new CartCoordinate(left ? 250 : 2750, 650));
+                scout1.setObjective(new CartCoordinate(left ? 400 : 2600, 650));
 
             if (scout2.isDone() && state == DEPLOY && tank3.isDone())
-                scout2.setObjective(new CartCoordinate(left ? 250 : 2750, 1450));
+                scout2.setObjective(new CartCoordinate(left ? 400 : 2600, 1450));
 
-            if (done()) {
-                switch (state) {
-                    case DEPLOY:
-                        state = CHARGE;
-                        scout1.setSpeedOf10(4);
-                        scout1.setObjective(new CartCoordinate(left ? 3000 : 0, 650));
-                        scout2.setSpeedOf10(4);
-                        scout2.setObjective(new CartCoordinate(left ? 3000 : 0, 1455));
-                        tank1.setObjective(new CartCoordinate(left ? 3000 : 0, 450));
-                        tank2.setObjective(new CartCoordinate(left ? 3000 : 0, 1050));
-                        tank3.setObjective(new CartCoordinate(left ? 3000 : 0, 1650));
-                        break;
-                }
+            if (done() && state == DEPLOY) {
+                state = CHARGE;
+                System.out.println(CHARGE);
+                scout1.setSpeedOf10(4);
+                scout2.setSpeedOf10(4);
+                seekAndDestroyPath();
             }
 
         }
-        slave.logPosition();
-        Orders currentOrder = CHILL;
-        switch (slave.getName()) {
+        if (state != TURN) {
+            switch (slave.getName()) {
 
-            case TANK_1:
-                tank1.majObj();
-                if (!t1Ashot) {
-                    fire(tank1.fire(slave), slave);
-                    currentOrder = tank1.getCurrentOrder();
-                }
-                slave.sendLogMessage("" + tank1.isDone() + " " + currentOrder);
-                break;
-            case TANK_2:
-                tank2.majObj();
-                if (!t2Ashot) {
-                    fire(tank2.fire(slave), slave);
-                    currentOrder = tank2.getCurrentOrder();
-                }
-                slave.sendLogMessage("" + tank2.isDone() + " " + currentOrder);
-                break;
-            case TANK_3:
-                tank3.majObj();
-                if (!t3Ashot) {
-                    fire(tank3.fire(slave), slave);
-                    currentOrder = tank3.getCurrentOrder();
-                }
-                slave.sendLogMessage("" + tank3.isDone() + " " + currentOrder);
-                break;
-            case SCOUT_1:
-                scout1.majObj();
-                if (!t1Ashot)
-                    currentOrder = scout1.getCurrentOrder();
-                slave.sendLogMessage("" + scout1.isDone() + " " + currentOrder);
-                break;
-            case SCOUT_2:
-                scout2.majObj();
-                if (!t3Ashot)
-                    currentOrder = scout2.getCurrentOrder();
-                slave.sendLogMessage("" + scout2.isDone() + " " + currentOrder);
-                break;
+                case TANK_1:
+                    if (tank1.isDone() && !pathTank1.isEmpty()) tank1.setObjective(pathTank1.remove(0));
+                    tank1.majObj();
+                    if (!t1Ashot) {
+                        fire(tank1.fire(slave), slave);
+                        currentOrder = tank1.getCurrentOrder();
+                    }
+                    if (state != TURN)
+                        slave.sendLogMessage(tank1.isDone()+ " go to "+ tank1.getObjective());
+                    break;
+                case TANK_2:
+                    if (tank2.isDone() && !pathTank2.isEmpty()) tank2.setObjective(pathTank2.remove(0));
+                    tank2.majObj();
+                    if (!t2Ashot) {
+                        fire(tank2.fire(slave), slave);
+                        currentOrder = tank2.getCurrentOrder();
+                    }
+                    if (state != TURN) slave.sendLogMessage("" + tank2.isDone() + " " + currentOrder);
+                    break;
+                case TANK_3:
+                    if (tank3.isDone() && !pathTank3.isEmpty()) tank3.setObjective(pathTank3.remove(0));
+                    tank3.majObj();
+                    if (!t3Ashot) {
+                        fire(tank3.fire(slave), slave);
+                        currentOrder = tank3.getCurrentOrder();
+                    }
+                    if (state != TURN) slave.sendLogMessage("" + tank3.isDone() + " " + currentOrder);
+                    break;
+                case SCOUT_1:
+                    if (scout1.isDone() && !pathScout1.isEmpty()) scout1.setObjective(pathScout1.remove(0));
+                    scout1.majObj();
+                    if (!t1Ashot)
+                        currentOrder = scout1.getCurrentOrder();
+                    if (state != TURN) slave.sendLogMessage("" + scout1.isDone() + " " + currentOrder);
+                    break;
+                case SCOUT_2:
+                    if (scout2.isDone() && !pathScout2.isEmpty()) scout2.setObjective(pathScout2.remove(0));
+                    scout2.majObj();
+                    if (!t3Ashot)
+                        currentOrder = scout2.getCurrentOrder();
+                    if (state != TURN) slave.sendLogMessage("" + scout2.isDone() + " " + currentOrder);
+                    break;
+            }
         }
-
         switch (currentOrder) {
             case MOVE:
                 slave.move();
@@ -360,6 +453,7 @@ public class MasterMind {
             if (abs(wreck.getX() - pos.getX()) < 1 && abs(wreck.getY() - pos.getY()) < 1)
                 return;
         }
+        seekAndDestroyPath();
         wrecks.add(pos);
     }
 

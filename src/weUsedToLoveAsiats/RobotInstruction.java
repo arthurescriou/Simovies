@@ -146,7 +146,6 @@ public class RobotInstruction {
 
     public double fire(DetectBrain slave) {
         double current = sp.getCurrent();
-        slave.sendLogMessage(current + "");
         return current;
     }
 
