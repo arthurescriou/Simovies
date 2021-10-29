@@ -125,7 +125,7 @@ public class Parameters {
     //---TEAM-B-PARAMETERS---//
     //-----------------------//
     public static final String teamBName = teamB.name;
-    public static final String teamBMainBotBrainClassName = "algorithms.MainRobot"; //class given by name; is supposed to extends robotsimulator.Brain
+    public static final String teamBMainBotBrainClassName = teamB.bMain; //class given by name; is supposed to extends robotsimulator.Brain
     public static final String teamBMainBotAvatar = teamB.avatarMain; //path relative to location of ant build.xml file
     public static final double teamBMainBotRadius = 50, //1 unit = 1mm, body radius
             teamBMainBotFrontalDetectionRange = 300, //1 unit = 1mm, range of frontal sensor
@@ -143,7 +143,7 @@ public class Parameters {
             teamBMainBot3InitY = 1200, //1 unit = 1mm, coordinate of central point
             teamBMainBot3InitHeading = WEST; //clockwise trigonometric unit, according to screen pixel coordinate reference
 
-    public static final String teamBSecondaryBotBrainClassName = "algorithms.SecondaryRobot"; //class given by name; is supposed to extends robotsimulator.Brain
+    public static final String teamBSecondaryBotBrainClassName = teamB.bSecondary; //class given by name; is supposed to extends robotsimulator.Brain
     public static final String teamBSecondaryBotAvatar = teamB.avatarSecondary; //path relative to location of ant build.xml file
     public static final double teamBSecondaryBotRadius = 50, //1 unit = 1mm, body radius
             teamBSecondaryBotFrontalDetectionRange = 500, //1 unit = 1mm, range of frontal sensor
