@@ -33,7 +33,7 @@ public class Astar {
         for (int i = 0; i < array.length; i++) {
             for (int j = 0; j < array[i].length; j++) {
                 final CartCoordinate coord = new CartCoordinate(i * 100, j * 100);
-                long obs = obstacle.stream().filter(o -> o.distance(coord) < 200).count();
+                long obs = obstacle.stream().filter(o -> o.distance(coord) < 100).count();
                 double distance = end.distance(coord);
                 array[i][j] = obs == 0 ? (int) Math.round(distance) : Integer.MAX_VALUE;
             }

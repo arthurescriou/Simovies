@@ -6,27 +6,27 @@
  * ******************************************************/
 package algorithms;
 
-import robotsimulator.Brain;
-import characteristics.Parameters;
-import characteristics.IRadarResult.Types;
 import characteristics.IFrontSensorResult;
 import characteristics.IRadarResult;
+import characteristics.IRadarResult.Types;
+import characteristics.Parameters;
+import robotsimulator.Brain;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Random;
 
-public class MainRobot extends Brain {
-	
+public class MainRobotL extends Brain {
+
 	/*************************   IMPORTANT   ******************************/
 	/** Modifier cette variable en fonction du côté qui nous est attribué **/
 	  	// - à gauche => true
 		// - à droite => false
-	  private boolean isLeftTeam = false;
+	  private boolean isLeftTeam = true;
 
 	/*********************************************************************/
-	
+
   //---PARAMETERS---//
   private static final double ANGLEPRECISION = 0.001;
   private static final double ANGLEPRECISIONBIS = 0.01;
@@ -60,7 +60,7 @@ public class MainRobot extends Brain {
   private static final int TURNSOUTHTASK = 11;
   private static final int TURNEASTTASK = 12;
   private static final int TURNWESTTASK = 13;
-  
+
   private static final int SINK = 0xBADC0DE1;
 
 
@@ -85,10 +85,10 @@ public class MainRobot extends Brain {
 	private boolean findNewShotAngle;
 	private boolean isMovingBack;
 	private int counter;
-	
+
 
   //---CONSTRUCTORS---//
-  public MainRobot() {
+  public MainRobotL() {
     super();
     allies = new HashMap<Integer, ArrayList<Double>>();
     ArrayList<Double> temp = new ArrayList<Double>(3);
